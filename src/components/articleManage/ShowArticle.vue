@@ -101,7 +101,7 @@ export default {
         var files = JSON.parse(obj.image);
 
         files.forEach(ele => {
-          ele.path = "http://localhost" + ele.path.slice(29);
+          ele.path = "http://localhost" + ele.path.slice(7);
           // console.log(ele.path);
         });
         this.files = files;

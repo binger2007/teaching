@@ -2,7 +2,7 @@
 <template>
   <div id="app">
     <div class="banner">
-      <router-link to="/admin" class="logo">好缔综合管理系统</router-link>
+      <router-link to="/admin" class="logo">备战打仗动员系统</router-link>
       <div class="poolTitle">{{$route.query.title}}</div>
       <ul class="userInfo">
         <li>
@@ -20,10 +20,6 @@
         <li>
           <i class="el-icon-setting"></i>
           <a style="cursor: pointer;" @click="changePass()">修改密码</a>
-        </li>
-        <li>
-          <i class="el-icon-s-home"></i>
-          <router-link to="/index">网站首页</router-link>
         </li>
         <li>
           <i class="el-icon-thirdtuichu"></i>
@@ -63,8 +59,9 @@
       <router-view v-if="isRouterShow" />
     </div>
     <div class="footer">
-      <span>版权所有：好缔网络科技有限公司</span>
-      <span>电话：17732596468</span>
+      <span>版权所有：航空兵第70旅</span>
+      <span>设计制作：遵化场站通信营自动化站——王文兵</span>
+      <span>电话：0231-62260</span>
     </div>
   </div>
 </template>

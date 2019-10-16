@@ -19,13 +19,13 @@
           ></el-cascader>
         </el-form-item>
 
-        <!-- <el-form-item label="选择单位" prop="department">
+        <el-form-item label="选择单位" prop="department">
           <el-cascader
             :options="departmentData"
             :props="{ checkStrictly: true }"
             @change="handleChangeDepartment"
           ></el-cascader>
-        </el-form-item>-->
+        </el-form-item>
 
         <el-form-item label="添加时间">
           <el-date-picker
@@ -40,9 +40,6 @@
         </el-form-item>
         <el-form-item label="简介">
           <el-input type="textarea" v-model="ruleForm.desc"></el-input>
-        </el-form-item>
-        <el-form-item label="缩略图">
-          <UploadImage @getImage="getImage" ref="UploadImage"></UploadImage>
         </el-form-item>
         <el-form-item label="上传附件">
           <el-button type="success" @click="openFilesTree">
@@ -75,7 +72,6 @@ import Editor from "../articleManage/Editor";
 import { generateOptions } from "../../assets/js/public";
 import { getCookie } from "../../assets/js/cookie";
 import Upload from "@/components/articleManage/Upload";
-import UploadImage from "@/components/articleManage/UploadImage";
 export default {
   name: "articleManage",
   data() {
@@ -89,7 +85,6 @@ export default {
         department: "",
         date: "",
         desc: "",
-        image: "",
         content: "",
         userName: getCookie("userName"),
         weight: 1,
@@ -101,9 +96,9 @@ export default {
         category: [
           { required: true, message: "请选择所属类别", trigger: "change" }
         ],
-        // department: [
-        //   { required: true, message: "请选择所属单位", trigger: "change" }
-        // ],
+        department: [
+          { required: true, message: "请选择所属单位", trigger: "change" }
+        ],
         content: [{ required: true, message: "请填写内容", trigger: "blur" }]
       },
       //选中的歌曲
@@ -117,8 +112,7 @@ export default {
   },
   components: {
     Editor,
-    Upload,
-    UploadImage
+    Upload
   },
   created() {},
   mounted() {
@@ -184,10 +178,6 @@ export default {
     getFiles(msg) {
       this.files = msg;
       this.ruleForm.files = JSON.stringify(msg);
-    },
-    //获得缩略图
-    getImage(msg) {
-      this.ruleForm.image = msg;
     }
   }
 };

@@ -14,7 +14,7 @@
           <span @click="handleChangeDepartment(node)">{{ node.label }}</span>
         </span>
     </el-tree>-->
-    <!-- <el-menu
+    <el-menu
       default-active="2"
       class="el-menu-vertical-demo sidebar"
       @open="handleOpen"
@@ -27,7 +27,7 @@
     >
       <h3 class="title">选择单位</h3>
       <Accordion :data="this.treeData"></Accordion>
-    </el-menu>-->
+    </el-menu>
     <!-- </div> -->
     <div class="main_wrapper">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -38,13 +38,13 @@
             @change="handleChangeClass"
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="选择单位">
+        <!-- <el-form-item label="选择单位">
           <el-cascader
             :options="departmentData"
             :props="{ checkStrictly: true }"
             @change="handleChangeDepartment"
           ></el-cascader>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="关键字">
           <el-input v-model="formInline.keyword" placeholder="关键字"></el-input>
         </el-form-item>
@@ -351,7 +351,7 @@ export default {
 }
 .main_wrapper {
   /* background-color: aquamarine; */
-  /* margin-left: 220px; */
+  margin-left: 220px;
   padding: 30px;
 }
 .side_tree {

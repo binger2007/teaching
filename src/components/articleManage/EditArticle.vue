@@ -51,9 +51,6 @@
         <el-form-item label="简介">
           <el-input type="textarea" v-model="ruleForm.desc"></el-input>
         </el-form-item>
-        <el-form-item label="缩略图">
-          <UploadImage @getImage="getImage" ref="UploadImage"></UploadImage>
-        </el-form-item>
         <el-form-item label="上传附件">
           <el-button type="success" @click="openFilesTree">
             上传
@@ -84,7 +81,6 @@ import Editor from "../articleManage/Editor";
 import Upload from "@/components/articleManage/Upload";
 import { generateOptions } from "../../assets/js/public";
 import { getCookie } from "../../assets/js/cookie";
-import UploadImage from "@/components/articleManage/UploadImage";
 export default {
   name: "EditArticle",
   data() {
@@ -103,8 +99,7 @@ export default {
         weight: 1,
         type: "editArticle",
         id: this.$route.query.id,
-        files: "",
-        image: ""
+        files: ""
       },
       rules: {
         title: [{ required: true, message: "请输入标题", trigger: "blur" }],
@@ -121,8 +116,7 @@ export default {
   },
   components: {
     Editor,
-    Upload,
-    UploadImage
+    Upload
   },
   mounted() {
     //加载文章信息
@@ -144,13 +138,9 @@ export default {
         this.ruleForm.weight = obj.weight;
         this.ruleForm.date = obj.create_date;
         this.ruleForm.content = obj.content;
-        this.ruleForm.files = obj.files;
-        this.ruleForm.image = obj.image;
+        this.ruleForm.files = obj.image;
         this.$store.state.content = obj.content;
-        this.files = obj.files ? JSON.parse(obj.files) : [];
-        if (obj.image) {
-          this.$refs.UploadImage.imageUrl = "http://localhost" + obj.image;
-        }
+        this.files = JSON.parse(obj.image);
       });
     },
     //加载分类信息
@@ -207,10 +197,6 @@ export default {
     getFiles(msg) {
       this.files = msg;
       this.ruleForm.files = JSON.stringify(msg);
-    },
-    //获得缩略图
-    getImage(msg) {
-      this.ruleForm.image = msg;
     }
   }
 };
