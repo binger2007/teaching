@@ -24,33 +24,6 @@
         </el-form>
       </div>
     </div>
-    <!-- <el-row :gutter="20">
-      <el-col :span="12" :offset="6">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>用户登陆</span>
-          </div>
-          <el-form
-            :model="loginRuleForm"
-            status-icon
-            :rules="loginRules"
-            ref="loginRuleForm"
-            label-width="100px"
-          >
-            <el-form-item label="用户名" prop="userName">
-              <el-input v-model="loginRuleForm.userName"></el-input>
-            </el-form-item>
-            <el-form-item label="密码" prop="pass">
-              <el-input type="password" v-model="loginRuleForm.pass"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="submitForm('loginRuleForm')">登陆</el-button>
-              <el-button @click="resetForm('loginRuleForm')">重置</el-button>
-            </el-form-item>
-          </el-form>
-        </el-card>
-      </el-col>
-    </el-row>-->
   </div>
 </template>
 <script>

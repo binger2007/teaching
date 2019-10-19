@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { getCookie } from "../assets/js/cookie.js";
+import { getCookie } from "../../assets/js/cookie.js";
 export default {
   name: "resetPass",
   data() {

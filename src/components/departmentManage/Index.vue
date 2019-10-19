@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="width: 90%;margin: 20px auto;margin-top:120px;">
+    <div style="width: 100%;">
       <el-button
         v-if="userType == 0"
         type="primary"
@@ -75,7 +75,7 @@
 import { getCookie, delCookie } from "../../assets/js/cookie.js";
 import { generateOptions } from "../../assets/js/public";
 export default {
-  name: "classManage",
+  name: "departmentManage",
   data() {
     return {
       userType: getCookie("utype"),
@@ -275,9 +275,9 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .box-card {
-  width: 90%;
+  width: 100%;
   margin: 20px auto;
-  height: calc(100vh - 240px);
+  /* height: calc(100vh - 240px); */
   overflow-y: auto;
 }
 .custom-tree-node {

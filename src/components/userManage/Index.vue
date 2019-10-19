@@ -1,26 +1,20 @@
 <template>
   <div>
-    <div style="width: 90%;margin: 20px auto;margin-top:120px;">
+    <div style="width: 100%;">
       <el-button
-        v-if="userType == 0"
         type="primary"
         icon="el-icon-plus"
         style="width: 100%;"
         @click="addUserDialogFormVisible = true"
       >添加用户</el-button>
     </div>
-    <el-table
-      :data="userTableData"
-      stripe
-      style="width: 90%;margin: 30px auto;"
-      :height="screenHeight - 240"
-    >
+    <el-table :data="userTableData" stripe style="width: 100%;margin: 30px auto;">
       <el-table-column type="index" align="center" width="50"></el-table-column>
       <el-table-column prop="uname" label="用户名" align="center"></el-table-column>
       <el-table-column prop="utype" label="类别" align="center"></el-table-column>
       <el-table-column prop="last_login_time" label="最后登陆时间" width="220" align="center"></el-table-column>
       <el-table-column prop="last_login_ip" label="最后登陆IP" align="center"></el-table-column>
-      <el-table-column label="操作" align="center" width="360" v-if="userType == 0">
+      <el-table-column label="操作" align="center" width="360">
         <template slot-scope="scope">
           <el-button
             @click="resetPwd(scope.row)"
@@ -46,6 +40,19 @@
             <el-option label="普通用户" value="1"></el-option>
           </el-select>
         </el-form-item>
+        <!-- 如果用户类别选择普通用户，则显示“选择管理单位” -->
+        <el-form-item
+          label="选择管理单位"
+          v-if="addUserForm.utype == '1'"
+          :label-width="formLabelWidth"
+          prop="department"
+        >
+          <el-cascader
+            :options="departmentData"
+            :props="{ checkStrictly: true }"
+            @change="handleChangeDepartment"
+          ></el-cascader>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addUserDialogFormVisible = false">取 消</el-button>
@@ -57,8 +64,7 @@
 </template>
 
 <script>
-import { timestampToTime } from "../../assets/js/public";
-import { getCookie, delCookie } from "../../assets/js/cookie.js";
+import { timestampToTime, generateOptions } from "../../assets/js/public";
 import EditUser from "./EditUser";
 export default {
   name: "userManage",
@@ -67,35 +73,31 @@ export default {
   },
   data() {
     return {
-      userType: getCookie("utype"),
+      // 级联分类数据
+      //所属单位
+      departmentData: [],
       //用户列表数据
       userTableData: [],
       addUserDialogFormVisible: false,
       addUserForm: {
         uname: "",
         utype: "",
+        department: "",
         type: "addUser"
       },
       addUserRules: {
-        name: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+        uname: [{ required: true, message: "请输入用户名", trigger: "blur" }],
         utype: [
           { required: true, message: "请选择用户类型", trigger: "change" }
         ]
       },
-      formLabelWidth: "120px",
-      //窗口高度
-      screenHeight: window.innerHeight
+      formLabelWidth: "120px"
     };
   },
   mounted() {
     this.loadUserList();
     //获取窗口高度
-    const that = this;
-    window.onresize = () => {
-      return (() => {
-        that.screenHeight = window.innerHeight;
-      })();
-    };
+    this.loadDepartment();
   },
   methods: {
     //加载用户
@@ -183,10 +185,21 @@ export default {
           }
         });
     },
+    //编辑用户
     edit(row) {
       this.$refs.EditUser.dialogVisible = true;
       this.$refs.EditUser.ruleForm.utype = row.utype == "管理员" ? "0" : "1";
       this.$refs.EditUser.ruleForm.uname = row.uname;
+    },
+    //加载分类信息
+    loadDepartment() {
+      this.$Axios.get("/handleDepartment.php?type=loadClass").then(res => {
+        this.departmentData = generateOptions(res.data);
+      });
+    },
+    //
+    handleChangeDepartment(value) {
+      this.addUserForm.department = value[value.length - 1];
     }
   }
 };

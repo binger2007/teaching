@@ -28,7 +28,7 @@
       </ul>
       <div class="clear"></div>
     </div>
-    <div class="header">
+    <!-- <div class="header">
       <el-menu
         :default-active="$store.state.activeIndex"
         mode="horizontal"
@@ -48,12 +48,11 @@
         <el-menu-item index="4">
           <router-link :to="{path:'/admin/departmentManage'}">单位管理</router-link>
         </el-menu-item>
-
         <el-menu-item index="5">
           <router-link :to="{path:'/admin/userManage'}">用户管理</router-link>
         </el-menu-item>
       </el-menu>
-    </div>
+    </div> -->
     <resetPass ref="resetPass"></resetPass>
     <div class="main">
       <router-view v-if="isRouterShow" />
