@@ -24,25 +24,27 @@ export default {
     return {};
   },
   methods: {
-    //处理类型
+    //处理类型,图片必须小于2M,视频不受大小限制
     handleExceed(file) {
       console.log(file);
       const isJPG =
         file.type === "image/jpeg" ||
         file.type === "image/png" ||
         file.type === "video/mp4";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 0.2;
       if (!isJPG) {
         this.$message.error(
           "上传图片只能是 JPG 格式和PNG格式,以及MP4格式的视频!"
         );
       }
-      //   if (!isLt2M) {
-      //     this.$message.error("上传图片大小不能超过 2MB!");
-      //   }
-      return isJPG;
+      if (
+        !isLt2M &&
+        (file.type === "image/jpeg" || file.type === "image/png")
+      ) {
+        this.$message.error("上传图片大小不能超过 2MB!");
+      }
 
-      //   return isJPG && isLt2M;
+      return (isJPG && isLt2M) || file.type === "video/mp4";
     },
     // 上传成功后回调
     successUpload(response, file, fileList) {
