@@ -1,10 +1,12 @@
 <template>
-  <div class="hello">学生管理</div>
+  <div class="hello">
+     <router-view />
+  </div>
 </template>
 
 <script>
 export default {
-  name: "studentManage",
+  name: "infoSetting",
   data() {
     return {
       msg: "Welcome to Your Vue.js App"

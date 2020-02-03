@@ -140,25 +140,23 @@ export default {
             this.ruleForm.date = new Date().valueOf();
           }
 
-          this.$Axios
-            .post("/handleArticle.php", this.$qs.stringify(this.ruleForm))
-            .then(res => {
-              if (res.data == "1") {
-                this.$message({
-                  message: "添加成功",
-                  type: "success"
-                });
-                this.$router.push("/admin");
-                // this.ruleForm.title = "";
-                // this.ruleForm.date = "";
-                // this.ruleForm.desc = "";
-                // this.ruleForm.content = "";
-                // this.ruleForm.weight = 1;
-                // this.$store.commit("getContent", "");
-              } else {
-                this.$message.error("不成功，请重新输入！");
-              }
-            });
+          this.$Axios.post("/handleArticle.php", this.ruleForm).then(res => {
+            if (res.data == "1") {
+              this.$message({
+                message: "添加成功",
+                type: "success"
+              });
+              this.$router.push("/admin");
+              // this.ruleForm.title = "";
+              // this.ruleForm.date = "";
+              // this.ruleForm.desc = "";
+              // this.ruleForm.content = "";
+              // this.ruleForm.weight = 1;
+              // this.$store.commit("getContent", "");
+            } else {
+              this.$message.error("不成功，请重新输入！");
+            }
+          });
         } else {
           return false;
         }

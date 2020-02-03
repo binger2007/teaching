@@ -74,11 +74,9 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$Axios
-            .post("/handleUser.php", this.$qs.stringify(this.ruleForm))
-            .then(res => {
-              // console.log(res);
-            });
+          this.$Axios.post("/handleUser.php", this.ruleForm).then(res => {
+            // console.log(res);
+          });
         } else {
           return false;
         }

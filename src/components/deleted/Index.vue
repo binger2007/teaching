@@ -213,45 +213,43 @@ export default {
       // this.formInline.department = str.substr(0, str.length - 1);
     },
     loadList() {
-      this.$Axios
-        .post("/handleArticle.php", this.$qs.stringify(this.formInline))
-        .then(res => {
-          var list = res.data[1];
-          var category = res.data[2];
-          var department = res.data[3];
-          list.forEach(ele => {
-            //处理时间
-            ele.create_date = timestampToTime(ele.create_date, false);
-            // 处理分类
-            var catArr = ele.category_id.split(",");
-            var cat_str = "";
-            catArr.forEach(cat_ele => {
-              category.forEach(item => {
-                if (item.id == cat_ele) {
-                  cat_str += "【" + item.label + "】/";
-                }
-              });
+      this.$Axios.post("/handleArticle.php", this.formInline).then(res => {
+        var list = res.data[1];
+        var category = res.data[2];
+        var department = res.data[3];
+        list.forEach(ele => {
+          //处理时间
+          ele.create_date = timestampToTime(ele.create_date, false);
+          // 处理分类
+          var catArr = ele.category_id.split(",");
+          var cat_str = "";
+          catArr.forEach(cat_ele => {
+            category.forEach(item => {
+              if (item.id == cat_ele) {
+                cat_str += "【" + item.label + "】/";
+              }
             });
-            ele.cat_str = cat_str.substr(0, cat_str.length - 1);
-
-            // 处理单位
-            var departmentArr = ele.department_id.split(",");
-            var department_str = "";
-            departmentArr.forEach(department_ele => {
-              department.forEach(item => {
-                if (item.id == department_ele) {
-                  department_str += "【" + item.label + "】/";
-                }
-              });
-            });
-            ele.department_str = department_str.substr(
-              0,
-              department_str.length - 1
-            );
           });
-          this.listData = list;
-          this.total = res.data[0].total;
+          ele.cat_str = cat_str.substr(0, cat_str.length - 1);
+
+          // 处理单位
+          var departmentArr = ele.department_id.split(",");
+          var department_str = "";
+          departmentArr.forEach(department_ele => {
+            department.forEach(item => {
+              if (item.id == department_ele) {
+                department_str += "【" + item.label + "】/";
+              }
+            });
+          });
+          ele.department_str = department_str.substr(
+            0,
+            department_str.length - 1
+          );
         });
+        this.listData = list;
+        this.total = res.data[0].total;
+      });
     },
     onSubmit() {
       this.formInline.pageNo = 1;
@@ -277,13 +275,10 @@ export default {
     },
     delArticle(row) {
       this.$Axios
-        .post(
-          "/handleArticle.php",
-          this.$qs.stringify({
-            type: "delArticle",
-            id: row._id
-          })
-        )
+        .post("/handleArticle.php", {
+          type: "delArticle",
+          id: row._id
+        })
         .then(res => {
           if (res.data) {
             this.$message({

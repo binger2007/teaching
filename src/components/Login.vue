@@ -12,13 +12,22 @@
           label-width="100px"
         >
           <el-form-item prop="userName">
-            <el-input v-model="loginRuleForm.userName" placeholder="请输入用户名"></el-input>
+            <el-input
+              v-model="loginRuleForm.userName"
+              placeholder="请输入用户名"
+            ></el-input>
           </el-form-item>
           <el-form-item prop="pass">
-            <el-input type="password" v-model="loginRuleForm.pass" placeholder="请输入密码"></el-input>
+            <el-input
+              type="password"
+              v-model="loginRuleForm.pass"
+              placeholder="请输入密码"
+            ></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('loginRuleForm')">登陆</el-button>
+            <el-button type="primary" @click="submitForm('loginRuleForm')"
+              >登陆</el-button
+            >
             <el-button @click="resetForm('loginRuleForm')">重置</el-button>
           </el-form-item>
         </el-form>
@@ -27,15 +36,14 @@
   </div>
 </template>
 <script>
-import { setCookie, getCookie } from "../assets/js/cookie.js";
+import { setCookie } from "../assets/js/cookie.js";
 export default {
   name: "login",
   data() {
     return {
       loginRuleForm: {
         userName: "",
-        pass: "",
-        type: "checkLogin"
+        pass: ""
       },
       loginRules: {
         userName: [
@@ -50,8 +58,9 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.loginRuleForm.pass = this.$md5(this.loginRuleForm.pass);
           this.$Axios
-            .post("/handleUser.php", this.$qs.stringify(this.loginRuleForm))
+            .post("handle_user/checkLogin", this.loginRuleForm)
             .then(res => {
               if (!res.data) {
                 this.$message({
@@ -59,8 +68,18 @@ export default {
                   type: "warning"
                 });
               } else {
-                setCookie("userName", this.loginRuleForm.userName, 1000 * 60);
-                setCookie("utype", res.data[0].utype, 1000 * 60);
+                setCookie("userName", res.data.uname, 1000 * 60);
+                sessionStorage.setItem("uName", res.data.uname);
+                sessionStorage.setItem("uType", res.data.utype);
+                sessionStorage.setItem("uId", res.data.id);
+                sessionStorage.setItem(
+                  "departmentId",
+                  res.data.department ? res.data.department.id : 0
+                );
+                sessionStorage.setItem(
+                  "departmentName",
+                  res.data.department ? res.data.department.label : "未知"
+                );
                 this.$router.push("/admin");
               }
             });

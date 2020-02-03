@@ -1,14 +1,39 @@
 <template>
   <el-dialog title="更改用户类别" :visible.sync="dialogVisible">
-    <el-form :model="ruleForm" status-icon ref="ruleForm" label-width="100px" class="demo-ruleForm">
-      <el-form-item label="选择用户类型" prop="pass">
-        <el-select style="width:80%" v-model="ruleForm.utype" placeholder="请选择">
+    <el-form
+      :model="ruleForm"
+      status-icon
+      ref="ruleForm"
+      label-width="100px"
+      class="demo-ruleForm"
+    >
+      <el-form-item label="选择用户类型" :label-width="formLabelWidth">
+        <el-select
+          style="width:80%"
+          v-model="ruleForm.utype"
+          placeholder="请选择"
+        >
           <el-option label="管理员" value="0"></el-option>
           <el-option label="普通用户" value="1"></el-option>
         </el-select>
       </el-form-item>
+      <!-- 如果用户类别选择普通用户，则显示“选择管理单位” -->
+      <el-form-item
+        label="选择管理单位"
+        v-if="ruleForm.utype == '1'"
+        :label-width="formLabelWidth"
+        prop="department"
+      >
+        <el-cascader
+          :options="departmentData"
+          :props="{ checkStrictly: true }"
+          @change="handleChangeDepartment"
+        ></el-cascader>
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')"
+          >提交</el-button
+        >
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -22,32 +47,34 @@ export default {
       dialogVisible: false,
       ruleForm: {
         utype: "",
-        type: "changeType",
-        uname: ""
-      }
+        id: "",
+        department: ""
+      },
+       formLabelWidth: "120px"
     };
   },
+  props: ["departmentData"],
   methods: {
     submitForm(formName) {
-      this.$Axios
-        .post("/handleUser.php", this.$qs.stringify(this.ruleForm))
-        .then(res => {
-          if (res.data == "1") {
-            this.$message({
-              message: "修改用户类型成功",
-              type: "success"
-            });
-            this.dialogVisible = false;
-            this.$emit("successEdit");
-          } else {
-            this.$message.error("不成功，请重新修改！");
-          }
-        });
+      this.$Axios.post("handle_user/changeType", this.ruleForm).then(res => {
+        if (res.data == "1") {
+          this.$message({
+            message: "修改用户类型成功",
+            type: "success"
+          });
+          this.dialogVisible = false;
+          this.$emit("successEdit");
+        } else {
+          this.$message.error("不成功，请重新修改！");
+        }
+      });
+    },
+    handleChangeDepartment(value) {
+      this.ruleForm.department = value[value.length - 1];
     }
   }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>

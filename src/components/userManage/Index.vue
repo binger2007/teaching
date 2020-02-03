@@ -6,14 +6,41 @@
         icon="el-icon-plus"
         style="width: 100%;"
         @click="addUserDialogFormVisible = true"
-      >添加用户</el-button>
+        >添加用户</el-button
+      >
     </div>
-    <el-table :data="userTableData" stripe style="width: 100%;margin: 30px auto;">
+    <el-table
+      :data="userTableData"
+      stripe
+      style="width: 100%;margin: 30px auto;"
+    >
       <el-table-column type="index" align="center" width="50"></el-table-column>
-      <el-table-column prop="uname" label="用户名" align="center"></el-table-column>
-      <el-table-column prop="utype" label="类别" align="center"></el-table-column>
-      <el-table-column prop="last_login_time" label="最后登陆时间" width="220" align="center"></el-table-column>
-      <el-table-column prop="last_login_ip" label="最后登陆IP" align="center"></el-table-column>
+      <el-table-column
+        prop="uname"
+        label="用户名"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="utype"
+        label="类别"
+        align="center"
+      ></el-table-column>
+      <el-table-column
+        prop="department.label"
+        label="管理单位"
+        align="center"
+      ></el-table-column>
+
+      <el-table-column label="最后登陆时间" width="220" align="center">
+        <template slot-scope="scope">
+          {{ timestampToTime(scope.row.last_login_time) }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="last_login_ip"
+        label="最后登陆IP"
+        align="center"
+      ></el-table-column>
       <el-table-column label="操作" align="center" width="360">
         <template slot-scope="scope">
           <el-button
@@ -21,20 +48,41 @@
             type="primary"
             size="small"
             icon="el-icon-setting"
-          >重置密码</el-button>
-          <el-button @click="edit(scope.row)" type="warning" size="small" icon="el-icon-edit">更改类别</el-button>
-          <el-button @click="delUser(scope.row)" type="danger" size="small" icon="el-icon-delete">删除</el-button>
+            >重置密码</el-button
+          >
+          <el-button
+            @click="edit(scope.row)"
+            type="warning"
+            size="small"
+            icon="el-icon-edit"
+            >更改类别</el-button
+          >
+          <el-button
+            @click="delUser(scope.row)"
+            type="danger"
+            size="small"
+            icon="el-icon-delete"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
     <!-- 添加用户对话框 -->
     <el-dialog title="添加用户" :visible.sync="addUserDialogFormVisible">
       <el-form :model="addUserForm" :rules="addUserRules" ref="addUserForm">
-        <el-alert title="添加用户的默认密码为123456，用户登陆后可在后台修改" type="warning" style="margin-bottom:30px;"></el-alert>
+        <el-alert
+          title="添加用户的默认密码为123456，用户登陆后可在后台修改"
+          type="warning"
+          style="margin-bottom:30px;"
+        ></el-alert>
         <el-form-item label="用户名" :label-width="formLabelWidth" prop="uname">
           <el-input v-model="addUserForm.uname" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="用户类别" :label-width="formLabelWidth" prop="utype">
+        <el-form-item
+          label="用户类别"
+          :label-width="formLabelWidth"
+          prop="utype"
+        >
           <el-select v-model="addUserForm.utype" placeholder="请选择用户类别">
             <el-option label="管理员" value="0"></el-option>
             <el-option label="普通用户" value="1"></el-option>
@@ -56,10 +104,16 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addUserDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitUser('addUserForm')">确 定</el-button>
+        <el-button type="primary" @click="submitUser('addUserForm')"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
-    <EditUser ref="EditUser" @successEdit="loadUserList()"></EditUser>
+    <EditUser
+      ref="EditUser"
+      :departmentData="departmentData"
+      @successEdit="loadUserList()"
+    ></EditUser>
   </div>
 </template>
 
@@ -82,8 +136,7 @@ export default {
       addUserForm: {
         uname: "",
         utype: "",
-        department: "",
-        type: "addUser"
+        department: ""
       },
       addUserRules: {
         uname: [{ required: true, message: "请输入用户名", trigger: "blur" }],
@@ -100,28 +153,13 @@ export default {
     this.loadDepartment();
   },
   methods: {
+    timestampToTime(time) {
+      return timestampToTime(time);
+    },
     //加载用户
     loadUserList() {
-      this.$Axios.get("/handleUser.php?type=loadUserList").then(res => {
-        res.data.forEach(ele => {
-          if (ele.utype == 0) {
-            ele.utype = "管理员";
-          } else {
-            ele.utype = "普通用户";
-          }
-
-          if (!ele.last_login_time) {
-            ele.last_login_time = "未登陆";
-          } else {
-            ele.last_login_time = timestampToTime(ele.last_login_time, true);
-          }
-          if (!ele.last_login_ip) {
-            ele.last_login_ip = "未登陆";
-          }
-        });
-
+      this.$Axios.get("handle_user/loadUser").then(res => {
         this.userTableData = res.data;
-        // console.log(res.data);
       });
     },
     //提交用户
@@ -129,13 +167,17 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.$Axios
-            .post("/handleUser.php", this.$qs.stringify(this.addUserForm))
+            .post("handle_user/addUser", this.addUserForm)
             .then(res => {
-              if (res.data == "1") {
+              if (res.data) {
                 this.$message({
                   message: "恭喜你，用户添加成功",
                   type: "success"
                 });
+                this.addUserForm.uname = "";
+                this.addUserForm.utype = "";
+                this.addUserForm.department = "";
+                this.addUserDialogFormVisible = false;
                 this.loadUserList();
               } else {
                 this.$message.error("不成功，用户名已存在！");
@@ -149,13 +191,9 @@ export default {
     //删除用户
     delUser(row) {
       this.$Axios
-        .post(
-          "/handleUser.php",
-          this.$qs.stringify({
-            type: "delUser",
-            id: row.id
-          })
-        )
+        .post("handle_user/delUser", {
+          id: row.id
+        })
         .then(res => {
           if (res.data) {
             this.$message({
@@ -169,13 +207,9 @@ export default {
     //重置密码
     resetPwd(row) {
       this.$Axios
-        .post(
-          "/handleUser.php",
-          this.$qs.stringify({
-            type: "resetPwd",
-            id: row.id
-          })
-        )
+        .post("handle_user/resetPwd", {
+          id: row.id
+        })
         .then(res => {
           if (res.data) {
             this.$message({
@@ -189,11 +223,11 @@ export default {
     edit(row) {
       this.$refs.EditUser.dialogVisible = true;
       this.$refs.EditUser.ruleForm.utype = row.utype == "管理员" ? "0" : "1";
-      this.$refs.EditUser.ruleForm.uname = row.uname;
+      this.$refs.EditUser.ruleForm.id = row.id;
     },
     //加载分类信息
     loadDepartment() {
-      this.$Axios.get("/handleDepartment.php?type=loadClass").then(res => {
+      this.$Axios.get("handle_department/loadDepartment").then(res => {
         this.departmentData = generateOptions(res.data);
       });
     },

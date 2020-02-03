@@ -3,7 +3,7 @@
     <el-aside width="220px" style="background-color: #304156">
       <router-link to="/admin" class="logo">
         <img src="../../assets/img/logo.png" alt />
-        <h1>学员成绩管理系统</h1>
+        <h1>投屏显示系统</h1>
       </router-link>
       <asideMenu></asideMenu>
     </el-aside>
@@ -12,14 +12,15 @@
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/admin' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item
-            v-for="(item,index) in this.$store.state.breadcrumbItems"
+            v-for="(item, index) in this.$store.state.breadcrumbItems"
             :key="index"
-          >{{item}}</el-breadcrumb-item>
+            >{{ item }}</el-breadcrumb-item
+          >
         </el-breadcrumb>
         <ul class="userInfo">
           <li>
             <i class="el-icon-thirdwode1"></i>
-            您好，{{userName}}
+            您好，{{ userName }} 【{{ utype }}-{{ departmentName }}】
           </li>
           <li>
             <i class="el-icon-setting"></i>
@@ -43,7 +44,6 @@
 <script>
 import resetPass from "@/components/Layout/ResetPass";
 import asideMenu from "@/components/Layout/AsideMenu";
-import { getCookie, delCookie } from "../../assets/js/cookie.js";
 export default {
   name: "layout",
   provide() {
@@ -57,17 +57,23 @@ export default {
   },
   data() {
     return {
-      userType: getCookie("utype"),
+      userType: sessionStorage.getItem("uType"),
       userName: "",
+      utype: "",
+      departmentId: "",
+      departmentName: "",
       isRouterShow: true
     };
   },
   computed: {},
   mounted() {
-    if (!getCookie("userName")) {
+    if (!sessionStorage.getItem("uName")) {
       this.$router.push("/login");
     } else {
-      this.userName = getCookie("userName");
+      this.userName = sessionStorage.getItem("uName");
+      this.utype = sessionStorage.getItem("uType");
+      this.departmentId = sessionStorage.getItem("departmentId");
+      this.departmentName = sessionStorage.getItem("departmentName");
     }
   },
   methods: {
@@ -77,7 +83,7 @@ export default {
       this.isRouterShow = true;
     },
     logout() {
-      delCookie("userName");
+      sessionStorage.clear();
       this.$router.push("/login");
     },
     handleSelect(key, keyPath) {
@@ -101,7 +107,7 @@ export default {
   font-size: 14px;
   height: 60px;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-  z-index: 10000;
+  z-index: 10;
 }
 
 .el-aside {

@@ -167,20 +167,18 @@ export default {
     submitClass(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$Axios
-            .post("/handleClass.php", this.$qs.stringify(this.addClassForm))
-            .then(res => {
-              if (res.data == "1") {
-                this.$message({
-                  message: "添加成功",
-                  type: "success"
-                });
-                this.addClassForm.cname = "";
-                this.loadClass();
-              } else {
-                this.$message.error("不成功，请重新输入！");
-              }
-            });
+          this.$Axios.post("/handleClass.php", this.addClassForm).then(res => {
+            if (res.data == "1") {
+              this.$message({
+                message: "添加成功",
+                type: "success"
+              });
+              this.addClassForm.cname = "";
+              this.loadClass();
+            } else {
+              this.$message.error("不成功，请重新输入！");
+            }
+          });
         } else {
           return false;
         }
@@ -220,13 +218,10 @@ export default {
         "';";
       sql += " COMMIT;";
       this.$Axios
-        .post(
-          "/handleClass.php",
-          this.$qs.stringify({
-            type: "handleSort",
-            sql: sql
-          })
-        )
+        .post("/handleClass.php", {
+          type: "handleSort",
+          sql: sql
+        })
         .then(res => {
           if (res.data) {
             this.$message({
@@ -244,20 +239,18 @@ export default {
     submitEditClass(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$Axios
-            .post("/handleClass.php", this.$qs.stringify(this.editClassForm))
-            .then(res => {
-              if (res.data == "1") {
-                this.$message({
-                  message: "修改成功",
-                  type: "success"
-                });
-                this.addClassForm.cname = "";
-                this.loadClass();
-              } else {
-                this.$message.error("不成功，请重新输入！");
-              }
-            });
+          this.$Axios.post("/handleClass.php", this.editClassForm).then(res => {
+            if (res.data == "1") {
+              this.$message({
+                message: "修改成功",
+                type: "success"
+              });
+              this.addClassForm.cname = "";
+              this.loadClass();
+            } else {
+              this.$message.error("不成功，请重新输入！");
+            }
+          });
         } else {
           return false;
         }

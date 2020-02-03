@@ -9,13 +9,23 @@
       class="demo-ruleForm"
     >
       <el-form-item label="密码" prop="pass">
-        <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+        <el-input
+          type="password"
+          v-model="ruleForm.pass"
+          autocomplete="off"
+        ></el-input>
       </el-form-item>
       <el-form-item label="确认密码" prop="checkPass">
-        <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+        <el-input
+          type="password"
+          v-model="ruleForm.checkPass"
+          autocomplete="off"
+        ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')"
+          >提交</el-button
+        >
         <el-button @click="resetForm('ruleForm')">重置</el-button>
       </el-form-item>
     </el-form>
@@ -23,7 +33,6 @@
 </template>
 
 <script>
-import { getCookie } from "../../assets/js/cookie.js";
 export default {
   name: "resetPass",
   data() {
@@ -51,8 +60,7 @@ export default {
       ruleForm: {
         pass: "",
         checkPass: "",
-        type: "changePass",
-        uname: getCookie("userName")
+        uname: sessionStorage.getItem("uName")
       },
       rules: {
         pass: [{ validator: validatePass, trigger: "blur" }],
@@ -67,9 +75,9 @@ export default {
           this.ruleForm.pass = this.$md5(this.ruleForm.pass);
           this.ruleForm.checkPass = this.$md5(this.ruleForm.checkPass);
           this.$Axios
-            .post("/handleUser.php", this.$qs.stringify(this.ruleForm))
+            .post("handle_user/changePass", this.ruleForm)
             .then(res => {
-              if (res.data == "1") {
+              if (res.data == 1) {
                 this.$message({
                   message: "修改密码成功",
                   type: "success"
@@ -92,5 +100,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>
