@@ -5,7 +5,7 @@
         type="primary"
         icon="el-icon-plus"
         style="width: 100%;"
-        @click="addUserDialogFormVisible = true"
+        @click="openAddDialog()"
         >添加用户</el-button
       >
     </div>
@@ -25,11 +25,7 @@
         label="类别"
         align="center"
       ></el-table-column>
-      <el-table-column
-        prop="department.label"
-        label="管理单位"
-        align="center"
-      ></el-table-column>
+      <el-table-column prop="departmentPath" label="管理单位"></el-table-column>
 
       <el-table-column label="最后登陆时间" width="220" align="center">
         <template slot-scope="scope">
@@ -55,7 +51,7 @@
             type="warning"
             size="small"
             icon="el-icon-edit"
-            >更改类别</el-button
+            >编辑</el-button
           >
           <el-button
             @click="delUser(scope.row)"
@@ -67,125 +63,76 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 添加用户对话框 -->
-    <el-dialog title="添加用户" :visible.sync="addUserDialogFormVisible">
-      <el-form :model="addUserForm" :rules="addUserRules" ref="addUserForm">
-        <el-alert
-          title="添加用户的默认密码为123456，用户登陆后可在后台修改"
-          type="warning"
-          style="margin-bottom:30px;"
-        ></el-alert>
-        <el-form-item label="用户名" :label-width="formLabelWidth" prop="uname">
-          <el-input v-model="addUserForm.uname" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item
-          label="用户类别"
-          :label-width="formLabelWidth"
-          prop="utype"
-        >
-          <el-select v-model="addUserForm.utype" placeholder="请选择用户类别">
-            <el-option label="管理员" value="0"></el-option>
-            <el-option label="普通用户" value="1"></el-option>
-          </el-select>
-        </el-form-item>
-        <!-- 如果用户类别选择普通用户，则显示“选择管理单位” -->
-        <el-form-item
-          label="选择管理单位"
-          v-if="addUserForm.utype == '1'"
-          :label-width="formLabelWidth"
-          prop="department"
-        >
-          <el-cascader
-            :options="departmentData"
-            :props="{ checkStrictly: true }"
-            @change="handleChangeDepartment"
-          ></el-cascader>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="addUserDialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitUser('addUserForm')"
-          >确 定</el-button
-        >
-      </div>
-    </el-dialog>
     <EditUser
       ref="EditUser"
       :departmentData="departmentData"
       @successEdit="loadUserList()"
     ></EditUser>
+    <AddUser
+      ref="AddUser"
+      :departmentData="departmentData"
+      @successAdd="loadUserList()"
+    ></AddUser>
   </div>
 </template>
 
 <script>
-import { timestampToTime, generateOptions } from "../../assets/js/public";
+import {
+  timestampToTime,
+  generateOptions,
+  computedDepartmentPath
+} from "../../assets/js/public";
 import EditUser from "./EditUser";
+import AddUser from "./AddUser";
 export default {
   name: "userManage",
   components: {
-    EditUser
+    EditUser,
+    AddUser
   },
   data() {
     return {
+      rootId: sessionStorage.getItem("departmentId"), //根单位
+      departmentForPath: [], //为了计算单位路径
       // 级联分类数据
-      //所属单位
-      departmentData: [],
       //用户列表数据
       userTableData: [],
-      addUserDialogFormVisible: false,
-      addUserForm: {
-        uname: "",
-        utype: "",
-        department: ""
-      },
-      addUserRules: {
-        uname: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-        utype: [
-          { required: true, message: "请选择用户类型", trigger: "change" }
-        ]
-      },
-      formLabelWidth: "120px"
+      //所属单位
+      departmentData: []
     };
   },
   mounted() {
-    this.loadUserList();
-    //获取窗口高度
+    //获取单位数据
     this.loadDepartment();
   },
   methods: {
     timestampToTime(time) {
       return timestampToTime(time);
     },
+    //加载分类信息
+    loadDepartment() {
+      this.$Axios
+        .post("handle_department/loadDepartment", {
+          departmentId: this.rootId
+        })
+        .then(res => {
+          this.departmentForPath = res.data; //用来计算单位路径
+          this.departmentData = generateOptions(res.data);
+          //先加载单位数据，再加载用户数据，因为用户数据需要计算单位路径
+          this.loadUserList();
+        });
+    },
     //加载用户
     loadUserList() {
-      this.$Axios.get("handle_user/loadUser").then(res => {
+      this.$Axios.get("handle_user/loadUser?did=" + this.rootId).then(res => {
         this.userTableData = res.data;
-      });
-    },
-    //提交用户
-    submitUser(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          this.$Axios
-            .post("handle_user/addUser", this.addUserForm)
-            .then(res => {
-              if (res.data) {
-                this.$message({
-                  message: "恭喜你，用户添加成功",
-                  type: "success"
-                });
-                this.addUserForm.uname = "";
-                this.addUserForm.utype = "";
-                this.addUserForm.department = "";
-                this.addUserDialogFormVisible = false;
-                this.loadUserList();
-              } else {
-                this.$message.error("不成功，用户名已存在！");
-              }
-            });
-        } else {
-          return false;
-        }
+        //计算单位路径
+        this.userTableData.forEach(ele => {
+          ele.departmentPath = computedDepartmentPath(
+            this.departmentForPath,
+            ele
+          );
+        });
       });
     },
     //删除用户
@@ -222,18 +169,15 @@ export default {
     //编辑用户
     edit(row) {
       this.$refs.EditUser.dialogVisible = true;
-      this.$refs.EditUser.ruleForm.utype = row.utype == "管理员" ? "0" : "1";
+      this.$refs.EditUser.ruleForm.utype =
+        row.utype == "超级管理员" ? "0" : "1";
       this.$refs.EditUser.ruleForm.id = row.id;
+      this.$refs.EditUser.ruleForm.uname = row.uname;
+      this.$refs.EditUser.ruleForm.department = row.department_id;
     },
-    //加载分类信息
-    loadDepartment() {
-      this.$Axios.get("handle_department/loadDepartment").then(res => {
-        this.departmentData = generateOptions(res.data);
-      });
-    },
-    //
-    handleChangeDepartment(value) {
-      this.addUserForm.department = value[value.length - 1];
+    //添加用户
+    openAddDialog() {
+      this.$refs.AddUser.dialogVisible = true;
     }
   }
 };

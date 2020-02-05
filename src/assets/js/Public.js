@@ -127,6 +127,7 @@ function getFirstDayOfYear(date) {
 function computedDepartmentPath(arr, item) {
   var tarArr = [];
   var pathId = item.p_ids + item.department_id;
+
   var pathIdArr = pathId.split(",");
   pathIdArr.forEach(ele => {
     arr.forEach(item => {

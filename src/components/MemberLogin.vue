@@ -1,16 +1,13 @@
 <template>
   <div class="wrap">
-    <h1>疫情监控系统（管理员登录）</h1>
+    <h1>疫情监控系统（会员登录）</h1>
     <el-card class="box-card" shadow="hover">
       <div slot="header" class="clearfix">
-        <span>管理员登录</span>
-        <!-- <el-button style="float: right; padding: 3px 0;color: #409eff;" type="text"
-          >会员登录</el-button
-        > -->
+        <span>会员登录</span>
         <router-link
           style="float: right; padding: 3px 0;color: #409eff;"
-          to="/memberLogin"
-          >会员登录</router-link
+          to="/login"
+          >管理员登录</router-link
         >
       </div>
       <el-form
@@ -46,6 +43,7 @@
             >登陆</el-button
           >
           <el-button @click="resetForm('loginRuleForm')">重置</el-button>
+          <el-button @click="reg()" type="success">注册会员</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -55,7 +53,7 @@
 import { generateOptions } from "../assets/js/public";
 import { setCookie } from "../assets/js/cookie.js";
 export default {
-  name: "login",
+  name: "memberLogin",
   data() {
     return {
       loginRuleForm: {
@@ -84,7 +82,7 @@ export default {
         if (valid) {
           this.loginRuleForm.pass = this.$md5(this.loginRuleForm.pass);
           this.$Axios
-            .post("handle_user/checkLogin", this.loginRuleForm)
+            .post("handle_user/checkMemberLogin", this.loginRuleForm)
             .then(res => {
               if (!res.data) {
                 this.$message({
@@ -92,20 +90,12 @@ export default {
                   type: "warning"
                 });
               } else {
-                // setCookie("userName", res.data.uname, 1000 * 60);
                 sessionStorage.clear();
-                sessionStorage.setItem("uName", res.data.uname);
-                sessionStorage.setItem("uType", res.data.utype);
-                sessionStorage.setItem("uId", res.data.id);
-                sessionStorage.setItem(
-                  "departmentId",
-                  res.data.department ? res.data.department.id : 0
-                );
-                sessionStorage.setItem(
-                  "departmentName",
-                  res.data.department ? res.data.department.label : "未知"
-                );
-                this.$router.push("/admin");
+                sessionStorage.setItem("mName", res.data.name);
+                sessionStorage.setItem("mId", res.data.Id);
+                sessionStorage.setItem("mDepartmentId", res.data.department_id);
+                sessionStorage.setItem("mDepartmentName", res.data.label);
+                this.$router.push("/member");
               }
             });
         } else {
@@ -128,6 +118,10 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    //跳转到注册页面
+    reg() {
+      this.$router.push("/regMember");
     }
   }
 };

@@ -10,9 +10,10 @@ export default {
   name: "App",
   mounted() {
     /*页面挂载获取cookie，如果存在username的cookie，则跳转到主页，不需登录*/
-    if (getCookie("userName")) {
-      this.$router.push("/admin");
-    } else {
+    if (this.$route.path == "/admin" && !sessionStorage.getItem("uName")) {
+      this.$router.push("/login");
+    }
+    if (this.$route.path == "/member" && !sessionStorage.getItem("mName")) {
       this.$router.push("/login");
     }
   }

@@ -7,20 +7,8 @@
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="选择用户类型" :label-width="formLabelWidth">
-        <el-select
-          style="width:80%"
-          v-model="ruleForm.utype"
-          placeholder="请选择"
-        >
-          <el-option label="管理员" value="0"></el-option>
-          <el-option label="普通用户" value="1"></el-option>
-        </el-select>
-      </el-form-item>
-      <!-- 如果用户类别选择普通用户，则显示“选择管理单位” -->
       <el-form-item
         label="选择管理单位"
-        v-if="ruleForm.utype == '1'"
         :label-width="formLabelWidth"
         prop="department"
       >
@@ -48,9 +36,10 @@ export default {
       ruleForm: {
         utype: "",
         id: "",
-        department: ""
+        department: "",
+        uname: ""
       },
-       formLabelWidth: "120px"
+      formLabelWidth: "120px"
     };
   },
   props: ["departmentData"],
@@ -65,7 +54,7 @@ export default {
           this.dialogVisible = false;
           this.$emit("successEdit");
         } else {
-          this.$message.error("不成功，请重新修改！");
+          this.$message.error("不成功，该单位用户名重复，请重新修改！");
         }
       });
     },

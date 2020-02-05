@@ -43,8 +43,8 @@ export default {
     //根据用户权限去筛选路由，用户分2类，utype=0,为超级管理员，不受权限限制。当utype=1时，需要过滤路由，由路由的meta信息requiresAuth值确定
     filterRoutes() {
       var utype = sessionStorage.getItem("uType");
-      if (utype != "管理员") {
-        this.$router.options.routes[1].children.forEach((ele, index) => {
+      if (utype != "超级管理员") {
+        this.$router.options.routes[2].children.forEach((ele, index) => {
           if (!ele.meta.requiresAuth) {
             this.menus.push(ele);
           }

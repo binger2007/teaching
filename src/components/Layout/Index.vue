@@ -3,7 +3,7 @@
     <el-aside width="220px" style="background-color: #304156">
       <router-link to="/admin" class="logo">
         <img src="../../assets/img/logo.png" alt />
-        <h1>投屏显示系统</h1>
+        <h1>疫情监控系统</h1>
       </router-link>
       <asideMenu></asideMenu>
     </el-aside>

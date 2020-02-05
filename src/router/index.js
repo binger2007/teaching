@@ -1,6 +1,10 @@
 import Vue from "vue";
 import Router from "vue-router";
 import login from "@/components/login";
+import memberLogin from "@/components/memberLogin";
+import member from "@/components/member/Index";
+import regMember from "@/components/member/Reg";
+
 import layout from "@/components/Layout/Index";
 import personManage from "@/components/personManage/Index";
 import departmentPerformance from "@/components/departmentPerformance/Index";
@@ -30,6 +34,10 @@ export default new Router({
       component: login
     },
     {
+      path: "/memberLogin",
+      component: memberLogin
+    },
+    {
       path: "/admin",
       component: layout,
       children: [
@@ -42,80 +50,80 @@ export default new Router({
             icon: "el-icon-s-custom"
           }
         },
-        {
-          path: "departmentPerformance",
-          component: departmentPerformance,
-          meta: {
-            title: "单位评估",
-            requiresAuth: false,
-            icon: "el-icon-star-on"
-          }
-        },
-        {
-          path: "infoSetting",
-          component: infoSetting,
-          meta: {
-            title: "内容设置",
-            requiresAuth: false,
-            icon: "el-icon-setting"
-          },
-          children: [
-            {
-              path: "setDuty",
-              component: setDuty,
-              meta: {
-                title: "值班信息",
-                requiresAuth: false,
-                icon: null
-              }
-            },
-            {
-              path: "situations",
-              component: situations,
-              meta: {
-                title: "检查情况",
-                requiresAuth: false,
-                icon: null
-              }
-            },
-            {
-              path: "notices",
-              component: notices,
-              meta: {
-                title: "通知公告",
-                requiresAuth: false,
-                icon: null
-              }
-            },
-            {
-              path: "mustKnow",
-              component: mustKnow,
-              meta: {
-                title: "应知应会",
-                requiresAuth: false,
-                icon: null
-              }
-            },
-            {
-              path: "knowledge",
-              component: knowledge,
-              meta: {
-                title: "理论学习",
-                requiresAuth: false,
-                icon: null
-              }
-            },
-            {
-              path: "showPic",
-              component: showPic,
-              meta: {
-                title: "图片展示",
-                requiresAuth: false,
-                icon: null
-              }
-            }
-          ]
-        },
+        // {
+        //   path: "departmentPerformance",
+        //   component: departmentPerformance,
+        //   meta: {
+        //     title: "单位评估",
+        //     requiresAuth: false,
+        //     icon: "el-icon-star-on"
+        //   }
+        // },
+        // {
+        //   path: "infoSetting",
+        //   component: infoSetting,
+        //   meta: {
+        //     title: "内容设置",
+        //     requiresAuth: false,
+        //     icon: "el-icon-setting"
+        //   },
+        //   children: [
+        //     {
+        //       path: "setDuty",
+        //       component: setDuty,
+        //       meta: {
+        //         title: "值班信息",
+        //         requiresAuth: false,
+        //         icon: null
+        //       }
+        //     },
+        //     {
+        //       path: "situations",
+        //       component: situations,
+        //       meta: {
+        //         title: "检查情况",
+        //         requiresAuth: false,
+        //         icon: null
+        //       }
+        //     },
+        //     {
+        //       path: "notices",
+        //       component: notices,
+        //       meta: {
+        //         title: "通知公告",
+        //         requiresAuth: false,
+        //         icon: null
+        //       }
+        //     },
+        //     {
+        //       path: "mustKnow",
+        //       component: mustKnow,
+        //       meta: {
+        //         title: "应知应会",
+        //         requiresAuth: false,
+        //         icon: null
+        //       }
+        //     },
+        //     {
+        //       path: "knowledge",
+        //       component: knowledge,
+        //       meta: {
+        //         title: "理论学习",
+        //         requiresAuth: false,
+        //         icon: null
+        //       }
+        //     },
+        //     {
+        //       path: "showPic",
+        //       component: showPic,
+        //       meta: {
+        //         title: "图片展示",
+        //         requiresAuth: false,
+        //         icon: null
+        //       }
+        //     }
+        //   ]
+        // },
         {
           path: "departmentManage",
           component: departmentManage,
@@ -130,7 +138,7 @@ export default new Router({
           component: userManage,
           meta: {
             title: "用户管理",
-            requiresAuth: true,
+            requiresAuth: false,
             icon: "el-icon-user"
           }
         },
@@ -143,6 +151,14 @@ export default new Router({
           component: personManage //默认显示学员管理界面
         }
       ]
+    },
+    {
+      path: "/member",
+      component: member
+    },
+    {
+      path: "/regMember",
+      component: regMember
     }
   ]
 });

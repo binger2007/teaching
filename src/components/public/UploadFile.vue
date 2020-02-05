@@ -11,7 +11,7 @@
   >
     <i class="el-icon-upload"></i>
     <div class="el-upload__text">
-      将文件拖到此处，或<em>点击上传,</em> 只能上传jpg/png文件，且不超过500kb
+      将文件拖到此处，或<em>点击上传,</em> 只能上传jpg/png/MP4文件，且不超过2M
     </div>
   </el-upload>
 </template>
@@ -26,12 +26,11 @@ export default {
   methods: {
     //处理类型,图片必须小于2M,视频不受大小限制
     handleExceed(file) {
-      console.log(file);
       const isJPG =
         file.type === "image/jpeg" ||
         file.type === "image/png" ||
         file.type === "video/mp4";
-      const isLt2M = file.size / 1024 / 1024 < 0.2;
+      const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isJPG) {
         this.$message.error(
           "上传图片只能是 JPG 格式和PNG格式,以及MP4格式的视频!"
