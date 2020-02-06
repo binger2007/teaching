@@ -9,24 +9,60 @@
       <el-form-item label="姓名" prop="name">
         <el-input v-model="ruleForm.name"></el-input>
       </el-form-item>
-      <el-form-item label="部职别" prop="bzb">
-        <el-input v-model="ruleForm.bzb"></el-input>
+      <el-form-item label="性别">
+        <el-radio-group v-model="ruleForm.sex">
+          <el-radio label="男"></el-radio>
+          <el-radio label="女"></el-radio>
+        </el-radio-group>
       </el-form-item>
-      <el-form-item label="单位" prop="department_id">
+      <el-form-item label="年龄">
+        <el-input-number
+          v-model="ruleForm.age"
+          :min="1"
+          :max="100"
+          label="描述文字"
+        ></el-input-number>
+      </el-form-item>
+      <el-form-item label="单位">
         <el-cascader
-          :placeholder="ruleForm.label"
           :options="departmentData"
           :props="{ checkStrictly: true }"
           @change="handleChangeDepartment"
+          :placeholder="ruleForm.departmentPath"
         ></el-cascader>
       </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="ruleForm.status" placeholder="">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.value"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="武汉旅居史" prop="lvju">
+        <el-radio-group v-model="ruleForm.lvju">
+          <el-radio label="是"></el-radio>
+          <el-radio label="否"></el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="密切接触史" prop="jiechu">
+        <el-radio-group v-model="ruleForm.jiechu">
+          <el-radio label="是"></el-radio>
+          <el-radio label="否"></el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="备注">
+        <el-input type="textarea" v-model="ruleForm.remark"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm('ruleForm')"
+          >保存</el-button
+        >
+      </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">取 消</el-button>
-      <el-button type="primary" @click="submitForm('ruleForm')"
-        >确 定</el-button
-      >
-    </div>
   </el-dialog>
 </template>
 
@@ -37,18 +73,46 @@ export default {
   data() {
     return {
       dialogFormVisible: false,
-      departmentData: [],
-      ruleForm: {
-        id: "",
-        name: "",
-        bzb: "",
-        department_id: ""
-      },
+      // departmentData: [],
+      departmentName: sessionStorage.getItem("departmentName"),
+      ruleForm: {},
       rules: {
-        name: [{ required: true, message: "请填写姓名", trigger: "blur" }]
-      }
+        name: [{ required: true, message: "请填写姓名", trigger: "blur" }],
+        status: [{ required: true, message: "请选择状态", trigger: "change" }]
+      },
+      options: [
+        {
+          value: "在位"
+        },
+        {
+          value: "隔离"
+        },
+        {
+          value: "疑似"
+        },
+        {
+          value: "确诊"
+        },
+        {
+          value: "休假"
+        },
+
+        {
+          value: "学习"
+        },
+        {
+          value: "借调"
+        },
+        {
+          value: "住院"
+        },
+        {
+          value: "其他"
+        }
+      ]
     };
   },
+  props: ["departmentData"],
   mounted() {},
   methods: {
     handleChangeDepartment(value) {
@@ -57,6 +121,11 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          delete this.ruleForm.label;
+          delete this.ruleForm.p_id;
+          delete this.ruleForm.p_ids;
+          delete this.ruleForm.performance;
+          delete this.ruleForm.departmentPath;
           this.$Axios
             .post("handle_person/editPerson", this.ruleForm)
             .then(res => {
@@ -68,7 +137,7 @@ export default {
                 this.$parent.loadPerson();
                 // this.loadPerson();
               } else {
-                this.$message.error("不成功！");
+                this.$message.error("不成功！当前单位出现重名");
               }
             });
         } else {

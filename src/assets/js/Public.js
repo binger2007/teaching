@@ -6,7 +6,8 @@ export {
   getFirstDayOfMonth,
   getFirstDayOfSeason,
   getFirstDayOfYear,
-  computedDepartmentPath
+  computedDepartmentPath,
+  dateToTime
 };
 
 // 生成uuid
@@ -33,6 +34,27 @@ function timestampToTime(timestamp, showHours) {
   timestamp = parseInt(timestamp);
 
   var date = new Date(timestamp); //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+  var Y = date.getFullYear() + "-";
+  var M =
+    (date.getMonth() + 1 < 10
+      ? "0" + (date.getMonth() + 1)
+      : date.getMonth() + 1) + "-";
+  var D = (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " ";
+  var h =
+    (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":";
+  var m =
+    (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+    ":";
+  var s = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+  if (showHours) {
+    return Y + M + D + h + m + s;
+  } else {
+    return Y + M + D;
+  }
+}
+
+//时间转换成日期时间格式,非时间戳
+function dateToTime(date, showHours) {
   var Y = date.getFullYear() + "-";
   var M =
     (date.getMonth() + 1 < 10

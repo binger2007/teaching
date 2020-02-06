@@ -1,120 +1,127 @@
 <template>
   <el-dialog
     width="80%"
-    :title="person.name + '的个人情况'"
+    title="隔离医学观察登记表"
     :visible.sync="dialogFormVisible"
   >
-    <el-row :gutter="12">
-      <el-col :span="12">
-        <el-card shadow="hover">
-          <div slot="header" class="clearfix">
-            <span>绩效表现</span>
-          </div>
-          <div class="block">
-            <div class="radio" style="margin-bottom:30px;">
-              排序：
-              <el-radio-group v-model="reverse">
-                <el-radio :label="true">倒序</el-radio>
-                <el-radio :label="false">正序</el-radio>
-              </el-radio-group>
-            </div>
-
-            <el-timeline
-              :reverse="reverse"
-              style="height:50vh;overflow-y: scroll"
-            >
-              <el-timeline-item
-                v-for="(performance, index) in person.performance"
-                :key="index"
-                :timestamp="performance.pubdate"
+    <el-table :data="info.performance">
+      <el-table-column align="center" type="index" width="70" label="序号">
+      </el-table-column>
+      <el-table-column align="center" label="姓名" width="120">
+        {{ info.name }}
+      </el-table-column>
+      <el-table-column align="center" label="性别" width="60">
+        {{ info.sex }}
+      </el-table-column>
+      <el-table-column align="center" label="年龄" width="60">
+        {{ info.age }}
+      </el-table-column>
+      <el-table-column align="center" prop="address" label="现隔离医学观察地址">
+      </el-table-column>
+      <el-table-column
+        align="center"
+        prop="pubdate"
+        label="观察日期"
+        width="120"
+      >
+      </el-table-column>
+      <el-table-column align="center" label="临床表现">
+        <el-table-column align="center" label="体温">
+          <el-table-column align="center" label="早" width="70">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.temp_am <= 37.5 && scope.row.temp_am">{{
+                scope.row.temp_am
+              }}</el-tag>
+              <el-tag
+                type="warning"
+                v-if="scope.row.temp_am > 37.5 && scope.row.temp_am <= 39"
+                >{{ scope.row.temp_am }}</el-tag
               >
-                <div :class="'type' + performance.fenlei">
-                  分类：{{ typeName[performance.fenlei] }}； <br />
-                  分数：{{ performance.score }}；
-                  <br />
-                  原因：{{ performance.reason }}
-                </div>
-              </el-timeline-item>
-            </el-timeline>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="12">
-        <el-card shadow="hover">
-          <div slot="header" class="clearfix">
-            <span>在位情况</span>
-          </div>
-          <div class="block">
-            <div class="radio" style="margin-bottom:30px;">
-              排序：
-              <el-radio-group v-model="reverse2">
-                <el-radio :label="true">倒序</el-radio>
-                <el-radio :label="false">正序</el-radio>
-              </el-radio-group>
-            </div>
-
-            <el-timeline
-              :reverse="reverse2"
-              style="height:50vh;overflow-y: scroll"
-            >
-              <el-timeline-item
-                v-for="(activity, index) in activities"
-                :key="index"
-                :timestamp="activity.timestamp"
+              <el-tag type="danger" v-if="scope.row.temp_am > 39">{{
+                scope.row.temp_am
+              }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="晚" width="70">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.temp_pm <= 37.5 && scope.row.temp_pm">{{
+                scope.row.temp_pm
+              }}</el-tag>
+              <el-tag
+                type="warning"
+                v-if="scope.row.temp_pm > 37.5 && scope.row.temp_pm <= 39"
+                >{{ scope.row.temp_pm }}</el-tag
               >
-                {{ activity.title }}
-              </el-timeline-item>
-            </el-timeline>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
+              <el-tag type="danger" v-if="scope.row.temp_pm > 39">{{
+                scope.row.temp_pm
+              }}</el-tag>
+            </template>
+          </el-table-column>
+        </el-table-column>
+        <el-table-column align="center" label="咳嗽">
+          <el-table-column align="center" label="早" width="70">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.cough_am == '否'">{{
+                scope.row.cough_am
+              }}</el-tag>
+              <el-tag type="warning" v-if="scope.row.cough_am == '是'">{{
+                scope.row.cough_am
+              }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="晚" width="70">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.cough_pm == '否'">{{
+                scope.row.cough_pm
+              }}</el-tag>
+              <el-tag type="warning" v-if="scope.row.cough_pm == '是'">{{
+                scope.row.cough_pm
+              }}</el-tag>
+            </template>
+          </el-table-column>
+        </el-table-column>
+        <el-table-column align="center" label="气促">
+          <el-table-column align="center" label="早" width="70">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.qicu_am == '否'">{{
+                scope.row.qicu_am
+              }}</el-tag>
+              <el-tag type="danger" v-if="scope.row.qicu_am == '是'">{{
+                scope.row.qicu_am
+              }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="晚" width="70">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.qicu_pm == '否'">{{
+                scope.row.qicu_pm
+              }}</el-tag>
+              <el-tag type="danger" v-if="scope.row.qicu_pm == '是'">{{
+                scope.row.qicu_pm
+              }}</el-tag>
+            </template>
+          </el-table-column>
+        </el-table-column>
+      </el-table-column>
+      <el-table-column align="center" prop="remark" label="备注" width="120">
+      </el-table-column>
+    </el-table>
   </el-dialog>
 </template>
 
 <script>
-import { generateOptions, timestampToTime } from "../../assets/js/public";
 export default {
   name: "personInfo",
   data() {
     return {
       dialogFormVisible: false,
-      person: {},
-      reverse: true,
-      reverse2: true,
-      activities: [],
-      typeName: ["思想教育", "军事训练", "日常管理"]
+      info: {}
     };
   },
   mounted() {},
-  methods: {
-    loadPersonInfo(id) {
-      this.$Axios
-        .post("handle_log/load", {
-          id: id
-        })
-        .then(res => {
-          if (res.data.length) {
-            res.data.forEach(ele => {
-              ele.timestamp = timestampToTime(ele.time);
-            });
-          }
-          this.activities = res.data;
-        });
-    }
-  }
+  methods: {}
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.type0 {
-  color: rgb(244, 91, 91);
-}
-.type1 {
-  color: rgb(128, 133, 233);
-}
-.type2 {
-  color: #e6a23c;
-}
-</style>
+<style scoped></style>

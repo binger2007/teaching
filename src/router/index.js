@@ -6,7 +6,9 @@ import member from "@/components/member/Index";
 import regMember from "@/components/member/Reg";
 
 import layout from "@/components/Layout/Index";
+import ansys from "@/components/ansys/Index";
 import personManage from "@/components/personManage/Index";
+import addPerson from "@/components/addPerson/Index";
 import departmentPerformance from "@/components/departmentPerformance/Index";
 import infoSetting from "@/components/infoSetting/Index";
 import setDuty from "@/components/infoSetting/setDuty";
@@ -42,12 +44,31 @@ export default new Router({
       component: layout,
       children: [
         {
+          path: "ansys",
+          component: ansys,
+          meta: {
+            title: "疫情分析",
+            requiresAuth: false,
+            icon: "el-icon-pie-chart"
+          }
+        },
+        {
           path: "personManage",
           component: personManage,
           meta: {
             title: "人员管理",
             requiresAuth: false,
             icon: "el-icon-s-custom"
+          }
+        },
+
+        {
+          path: "addPerson",
+          component: addPerson,
+          meta: {
+            title: "添加人员",
+            requiresAuth: false,
+            icon: "el-icon-plus"
           }
         },
         // {
