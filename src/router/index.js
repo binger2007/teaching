@@ -8,6 +8,7 @@ import regMember from "@/components/member/Reg";
 import layout from "@/components/Layout/Index";
 import ansys from "@/components/ansys/Index";
 import personManage from "@/components/personManage/Index";
+import auditPerson from "@/components/auditPerson/Index";
 import addPerson from "@/components/addPerson/Index";
 import departmentPerformance from "@/components/departmentPerformance/Index";
 import infoSetting from "@/components/infoSetting/Index";
@@ -63,14 +64,23 @@ export default new Router({
         },
 
         {
-          path: "addPerson",
-          component: addPerson,
+          path: "auditPerson",
+          component: auditPerson,
           meta: {
-            title: "添加人员",
+            title: "审核人员",
             requiresAuth: false,
             icon: "el-icon-plus"
           }
         },
+        // {
+        //   path: "addPerson",
+        //   component: addPerson,
+        //   meta: {
+        //     title: "添加人员",
+        //     requiresAuth: false,
+        //     icon: "el-icon-plus"
+        //   }
+        // },
         // {
         //   path: "departmentPerformance",
         //   component: departmentPerformance,

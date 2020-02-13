@@ -59,7 +59,8 @@ export default {
     loadPerson() {
       this.$Axios
         .post("handle_person/loadPerson", {
-          departmentId: this.rootId
+          departmentId: this.rootId,
+          authed: 2
         })
         .then(res => {
           //根据填报的数据判断是否发烧、咳嗽、气促

@@ -185,7 +185,8 @@ export default {
       departmentData: [], //单位的级联菜单数据
       personData: [], //人员列表数据
       pagesize: 10,
-      currpage: 1
+      currpage: 1,
+      departmentForPath: []
     };
   },
   components: {
@@ -213,7 +214,8 @@ export default {
     loadPerson() {
       this.$Axios
         .post("handle_person/loadPerson", {
-          departmentId: this.rootId
+          departmentId: this.rootId,
+          authed: 2
         })
         .then(res => {
           this.personData = res.data;

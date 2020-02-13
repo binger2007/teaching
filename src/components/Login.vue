@@ -1,17 +1,15 @@
 <template>
   <div class="wrap">
+    <div class="code">
+      <img src="../../static/img/code.jpg" alt="" />
+      <div>
+        微信扫描二维码，关注公众号，上报疫情数据
+      </div>
+    </div>
     <h1>疫情监控系统（管理员登录）</h1>
     <el-card class="box-card" shadow="hover">
       <div slot="header" class="clearfix">
         <span>管理员登录</span>
-        <!-- <el-button style="float: right; padding: 3px 0;color: #409eff;" type="text"
-          >会员登录</el-button
-        > -->
-        <router-link
-          style="float: right; padding: 3px 0;color: #409eff;"
-          to="/memberLogin"
-          >会员登录</router-link
-        >
       </div>
       <el-form
         :model="loginRuleForm"
@@ -34,13 +32,13 @@
             placeholder="请输入密码"
           ></el-input>
         </el-form-item>
-        <el-form-item label="选择单位" prop="department">
+        <!-- <el-form-item label="选择单位" prop="department">
           <el-cascader
             :options="departmentData"
             :props="{ checkStrictly: true }"
             @change="handleChangeDepartment"
           ></el-cascader>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
           <el-button type="primary" @click="submitForm('loginRuleForm')"
             >登陆</el-button
@@ -52,31 +50,31 @@
   </div>
 </template>
 <script>
-import { generateOptions } from "../assets/js/public";
-import { setCookie } from "../assets/js/cookie.js";
+// import { generateOptions } from "../assets/js/public";
+// import { setCookie } from "../assets/js/cookie.js";
 export default {
   name: "login",
   data() {
     return {
       loginRuleForm: {
         userName: "",
-        pass: "",
-        department: ""
+        pass: ""
+        // department: ""
       },
       loginRules: {
         userName: [
           { required: true, message: "请输入用户名", trigger: "blur" }
         ],
-        pass: [{ required: true, message: "请输入密码", trigger: "blur" }],
-        department: [
-          { required: true, message: "请选择用户类型", trigger: "change" }
-        ]
-      },
-      departmentData: []
+        pass: [{ required: true, message: "请输入密码", trigger: "blur" }]
+        // department: [
+        //   { required: true, message: "请选择用户类型", trigger: "change" }
+        // ]
+      }
+      // departmentData: []
     };
   },
   mounted() {
-    this.loadDepartment();
+    // this.loadDepartment();
   },
   methods: {
     submitForm(formName) {
@@ -114,15 +112,15 @@ export default {
       });
     },
     //加载分类信息
-    loadDepartment() {
-      this.$Axios
-        .post("handle_department/loadDepartment", {
-          departmentId: 0
-        })
-        .then(res => {
-          this.departmentData = generateOptions(res.data);
-        });
-    },
+    // loadDepartment() {
+    //   this.$Axios
+    //     .post("handle_department/loadDepartment", {
+    //       departmentId: 0
+    //     })
+    //     .then(res => {
+    //       this.departmentData = generateOptions(res.data);
+    //     });
+    // },
     handleChangeDepartment(value) {
       this.loginRuleForm.department = value[value.length - 1];
     },
@@ -141,13 +139,20 @@ h1 {
 }
 .wrap {
   width: 100vw;
-  height: calc(50vh + 200px);
-  padding-top: calc(50vh - 200px);
+  height: 90vh;
+  padding-top: 10vh;
   background-color: #f2f6fc;
 }
 .box-card {
   width: 500px;
   margin-left: calc(50vw - 250px);
   /* height: 400px; */
+}
+.code {
+  text-align: center;
+  margin-bottom: 5vh;
+}
+.code img {
+  height: 25vh;
 }
 </style>
