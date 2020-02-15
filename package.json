@@ -19,6 +19,7 @@
     "js-md5": "^0.7.3",
     "vue": "^2.5.2",
     "vue-axios": "^2.1.4",
+    "vue-json-excel": "^0.2.98",
     "vue-jsonp": "^0.1.8",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.1",

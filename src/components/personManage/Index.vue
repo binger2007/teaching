@@ -1,5 +1,7 @@
 <template>
   <div>
+    <!-- 搜索表单 -->
+    <Search ref="search" @onSearch="search" :personData="personData"></Search>
     <el-row :gutter="12">
       <el-col :span="24">
         <!-- 人员列表 -->
@@ -243,6 +245,7 @@ import {
 import EditPerson from "./EditPerson";
 import HandlePerformance from "./HandlePerformance";
 import PersonInfo from "./PersonInfo";
+import Search from "./Search";
 
 export default {
   name: "index",
@@ -252,13 +255,18 @@ export default {
       departmentData: [], //单位的级联菜单数据
       personData: [], //人员列表数据
       pagesize: 10,
-      currpage: 1
+      currpage: 1,
+      loadPersonForm: {
+        departmentId: sessionStorage.getItem("departmentId"),
+        authed: 2
+      }
     };
   },
   components: {
     EditPerson,
     HandlePerformance,
-    PersonInfo
+    PersonInfo,
+    Search
   },
   mounted() {
     this.loadDepartment();
@@ -272,25 +280,30 @@ export default {
         })
         .then(res => {
           this.departmentData = generateOptions(res.data);
+          this.$refs.search.departmentData = this.departmentData;
           this.loadPerson();
         });
     },
     //加载人员
     loadPerson() {
       this.$Axios
-        .post("handle_person/loadPerson", {
-          departmentId: this.rootId,
-          authed: 2
-        })
+        .post("handle_person/loadPerson", this.loadPersonForm)
         .then(res => {
           this.personData = res.data;
-          this.personData.forEach(ele => {
+          res.data.forEach((ele, index) => {
+            ele.index = index + 1;
             ele.departmentPath = computedDepartmentPath(
               this.departmentData,
               ele.department_id,
               []
             ).join("/");
             if (ele.performance.length > 0) {
+              ele.temp_am = ele.performance[0].temp_am;
+              ele.temp_pm = ele.performance[0].temp_pm;
+              ele.cough_am = ele.performance[0].cough_am;
+              ele.cough_pm = ele.performance[0].cough_pm;
+              ele.qicu_am = ele.performance[0].qicu_am;
+              ele.qicu_pm = ele.performance[0].qicu_pm;
               //低烧
               if (
                 (ele.performance[0].temp_pm > 37.5 &&
@@ -326,9 +339,45 @@ export default {
               ) {
                 ele.qicu = "气促";
               }
+            } else {
+              ele.temp_am = "";
+              ele.temp_pm = "";
+              ele.cough_am = "";
+              ele.cough_pm = "";
+              ele.qicu_am = "";
+              ele.qicu_pm = "";
             }
           });
-          console.log(this.personData);
+          //过滤发烧
+          if (this.loadPersonForm.fashao) {
+            var arr = [];
+            this.personData.forEach(ele => {
+              if (ele.gaoshao || ele.dishao) {
+                arr.push(ele);
+              }
+            });
+            this.personData = arr;
+          }
+          //过滤咳嗽
+          if (this.loadPersonForm.cough) {
+            var arr = [];
+            this.personData.forEach(ele => {
+              if (ele.cough) {
+                arr.push(ele);
+              }
+            });
+            this.personData = arr;
+          }
+          //过滤气促
+          if (this.loadPersonForm.qicu) {
+            var arr = [];
+            this.personData.forEach(ele => {
+              if (ele.qicu) {
+                arr.push(ele);
+              }
+            });
+            this.personData = arr;
+          }
         });
     },
     //处理分页
@@ -371,6 +420,12 @@ export default {
       this.$refs.personInfo.dialogFormVisible = true;
       this.$refs.personInfo.info = row;
       // this.$refs.personInfo.loadPersonInfo(person.Id);
+    },
+    //处理搜索事件
+    search(obj) {
+      Object.assign(this.loadPersonForm, obj);
+      this.loadPersonForm = obj;
+      this.loadPerson();
     }
   }
 };

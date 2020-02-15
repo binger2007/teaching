@@ -7,6 +7,8 @@ import "./assets/style0/theme/index.css";
 
 import App from "./App";
 import router from "./router";
+import JsonExcel from "vue-json-excel";
+Vue.component("downloadExcel", JsonExcel);
 
 import Axios from "axios";
 import qs from "qs";
