@@ -6,7 +6,7 @@
         type="primary"
         icon="el-icon-plus"
         style="width: 100%;"
-        @click="append({ id: 0, p_ids: null })"
+        @click="append({ id: 0 })"
         >添加根单位</el-button
       >
     </div>
@@ -87,8 +87,7 @@ export default {
       editClassdialogVisible: false,
       addClassForm: {
         cname: "",
-        pid: "",
-        pids: ""
+        pid: ""
       },
       // 编辑对话框
       editClassForm: {
@@ -121,16 +120,11 @@ export default {
     append(data) {
       this.addClassdialogVisible = true;
       this.addClassForm.pid = data.id;
-      if (data.p_ids === null) {
-        this.addClassForm.pids = "0";
-      } else {
-        this.addClassForm.pids = data.p_ids + data.id;
-      }
     },
     // 删除节点
     remove(node, data) {
       this.$confirm(
-        "此操作将永久删除该分类以及分类下面的所有内容, 是否继续?",
+        "此操作将永久删除该单位及其子单位以及以及这些单位下属的人员,并且不能恢复 是否继续?",
         "提示",
         {
           confirmButtonText: "确定",
@@ -186,7 +180,6 @@ export default {
     },
     handleDrop(draggingNode, dropNode, dropType, ev) {
       if (
-        this.userType == "普通用户" &&
         dropNode.data.id == sessionStorage.getItem("departmentId") &&
         (dropType == "before" || dropType == "after")
       ) {
@@ -204,10 +197,6 @@ export default {
         var obj = {
           draggingNodeId: draggingNode.data.id, //拖拽的节点
           brotherIds: JSON.stringify(brotherIds),
-          pids:
-            dropType == "inner"
-              ? dropNode.data.p_ids + dropNode.data.id + ","
-              : dropNode.data.p_ids,
           pid: dropType == "inner" ? dropNode.data.id : dropNode.data.p_id
         };
         this.$Axios.post("handle_department/sortDepartment", obj).then(res => {

@@ -123,7 +123,6 @@ export default {
         if (valid) {
           delete this.ruleForm.label;
           delete this.ruleForm.p_id;
-          delete this.ruleForm.p_ids;
           delete this.ruleForm.performance;
           delete this.ruleForm.departmentPath;
           this.$Axios

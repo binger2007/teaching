@@ -13,7 +13,7 @@
         >
           <el-table-column type="index" width="50" align="center">
           </el-table-column>
-          <el-table-column label="姓名" width="120" align="center">
+          <el-table-column label="姓名" width="80" align="center">
             <template slot-scope="scope">
               <el-link @click="openPersonInfo(scope.row)" type="primary">{{
                 scope.row.name
@@ -74,12 +74,79 @@
               <el-tag type="danger" v-else>{{ scope.row.jiechu }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column
-            label="临床表现"
-            align="center"
-            prop="jiechu"
-            width="200"
-          >
+          <el-table-column label="体温" align="center">
+            <el-table-column label="早" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.performance.length > 0">
+                  {{
+                    scope.row.performance[0].temp_am
+                      ? scope.row.performance[0].temp_am
+                      : ""
+                  }}</span
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="晚" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.performance.length > 0">
+                  {{
+                    scope.row.performance[0].temp_pm
+                      ? scope.row.performance[0].temp_pm
+                      : ""
+                  }}</span
+                >
+              </template>
+            </el-table-column>
+          </el-table-column>
+          <el-table-column label="咳嗽" align="center">
+            <el-table-column label="早" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.performance.length > 0">
+                  {{
+                    scope.row.performance[0].cough_am
+                      ? scope.row.performance[0].cough_am
+                      : ""
+                  }}</span
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="晚" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.performance.length > 0">
+                  {{
+                    scope.row.performance[0].cough_pm
+                      ? scope.row.performance[0].cough_pm
+                      : ""
+                  }}</span
+                >
+              </template>
+            </el-table-column>
+          </el-table-column>
+          <el-table-column label="气促" align="center">
+            <el-table-column label="早" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.performance.length > 0">
+                  {{
+                    scope.row.performance[0].qicu_am
+                      ? scope.row.performance[0].qicu_am
+                      : ""
+                  }}</span
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="晚" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.performance.length > 0">
+                  {{
+                    scope.row.performance[0].qicu_pm
+                      ? scope.row.performance[0].qicu_pm
+                      : ""
+                  }}</span
+                >
+              </template>
+            </el-table-column>
+          </el-table-column>
+          <el-table-column label="临床表现" align="center" prop="jiechu">
             <template slot-scope="scope">
               <!-- 先记录体温，37.5~39，30~42 -->
               <el-tag type="warning" v-if="scope.row.dishao">{{
@@ -118,10 +185,10 @@
             fixed="right"
             align="center"
             label="操作"
-            width="250"
+            width="100"
           >
             <template slot-scope="scope">
-              <el-button
+              <!-- <el-button
                 @click="handlePerformance(scope.row)"
                 type="success"
                 size="small"
@@ -132,7 +199,7 @@
                 type="primary"
                 size="small"
                 >编辑</el-button
-              >
+              > -->
               <el-button
                 @click="delPerson(scope.row)"
                 type="danger"
@@ -185,8 +252,7 @@ export default {
       departmentData: [], //单位的级联菜单数据
       personData: [], //人员列表数据
       pagesize: 10,
-      currpage: 1,
-      departmentForPath: []
+      currpage: 1
     };
   },
   components: {
@@ -206,7 +272,6 @@ export default {
         })
         .then(res => {
           this.departmentData = generateOptions(res.data);
-          this.departmentForPath = res.data; //用来计算单位路径
           this.loadPerson();
         });
     },
@@ -221,9 +286,10 @@ export default {
           this.personData = res.data;
           this.personData.forEach(ele => {
             ele.departmentPath = computedDepartmentPath(
-              this.departmentForPath,
-              ele
-            );
+              this.departmentData,
+              ele.department_id,
+              []
+            ).join("/");
             if (ele.performance.length > 0) {
               //低烧
               if (
@@ -262,6 +328,7 @@ export default {
               }
             }
           });
+          console.log(this.personData);
         });
     },
     //处理分页
@@ -292,7 +359,7 @@ export default {
       this.$refs.handlePerformance.dialogFormVisible = true;
       this.$refs.handlePerformance.name = row.name;
       this.$refs.handlePerformance.danwei = row.departmentPath;
-      this.$refs.handlePerformance.form.belong_id = row.Id;
+      this.$refs.handlePerformance.form.belong_id = row.openid;
       if (row.performance.length > 0) {
         this.$refs.handlePerformance.form.address = row.performance[0].address;
       } else {

@@ -6,8 +6,9 @@
         type="primary"
         icon="el-icon-plus"
         style="width: 100%;"
-        @click="append({id:0,p_ids:null})"
-      >添加根类别</el-button>
+        @click="append({ id: 0, p_ids: null })"
+        >添加根类别</el-button
+      >
     </div>
     <el-card class="box-card" shadow="hover">
       <el-tree
@@ -33,21 +34,24 @@
               icon="el-icon-plus"
               size="mini"
               @click="() => append(data)"
-            >增加</el-button>
+              >增加</el-button
+            >
             <el-button
               v-if="userType == 0"
               type="text"
               icon="el-icon-edit"
               size="mini"
               @click="() => edit(data)"
-            >编辑</el-button>
+              >编辑</el-button
+            >
             <el-button
               v-if="userType == 0"
               type="text"
               icon="el-icon-delete"
               size="mini"
               @click="() => remove(node, data)"
-            >删除</el-button>
+              >删除</el-button
+            >
           </span>
         </span>
       </el-tree>
@@ -60,7 +64,9 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addClassdialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitClass('addClassForm')">确 定</el-button>
+        <el-button type="primary" @click="submitClass('addClassForm')"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
     <el-dialog title="编辑类别" :visible.sync="editClassdialogVisible">
@@ -71,7 +77,9 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="editClassdialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitEditClass('editClassForm')">确 定</el-button>
+        <el-button type="primary" @click="submitEditClass('editClassForm')"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
   </div>

@@ -104,6 +104,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          // console.log(this.form);
           if (this.form.pubdate.length != 11) {
             this.form.pubdate = dateToTime(this.form.pubdate);
           }

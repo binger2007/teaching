@@ -75,37 +75,48 @@ function dateToTime(date, showHours) {
 }
 
 //递归生成树形结构
-
-function generateOptions(params) {
-  //生成Cascader级联数据
-  var result = [];
-  for (let param of params) {
-    param.value = param.id;
-    if (param.p_id == 0) {
-      //判断是否为顶层节点
-      param.children = getchilds(param.id, params); //获取子节点
-      result.push(param);
-    }
-  }
-  return result;
-}
-
-function getchilds(id, array) {
-  let childs = new Array();
-  for (let arr of array) {
-    //循环获取子节点
-    if (arr.p_id == id) {
-      childs.push(arr);
-    }
-  }
-  for (let child of childs) {
-    //获取子节点的子节点
-    let childscopy = getchilds(child.id, array); //递归获取子节点
-    if (childscopy.length > 0) {
-      child.children = childscopy;
-    }
-  }
-  return childs;
+/**
+ * 该方法用于将有父子关系的数组转换成树形结构的数组
+ * 接收一个具有父子关系的数组作为参数
+ * 返回一个树形结构的数组
+ */
+function generateOptions(data) {
+  //没有父节点的数据
+  let departmentId = sessionStorage.getItem("departmentId");
+  let parents = data.filter(
+    value => value.id == departmentId || value.id == null
+  );
+  //有父节点的数据
+  let childrens = data.filter(
+    value => value.id != departmentId && value.id != null
+  );
+  //定义转换方法的具体实现
+  let translator = (parents, childrens) => {
+    //遍历父节点数据
+    parents.forEach(parent => {
+      parent.value = parent.id;
+      //遍历子节点数据
+      childrens.forEach((current, index) => {
+        //此时找到父节点对应的一个子节点
+        if (current.p_id === parent.id) {
+          //对子节点数据进行深复制，这里只支持部分类型的数据深复制，对深复制不了解的童靴可以先去了解下深复制
+          let temp = JSON.parse(JSON.stringify(childrens));
+          //让当前子节点从temp中移除，temp作为新的子节点数据，这里是为了让递归时，子节点的遍历次数更少，如果父子关系的层级越多，越有利
+          temp.splice(index, 1);
+          //让当前子节点作为唯一的父节点，去递归查找其对应的子节点
+          translator([current], temp);
+          //把找到子节点放入父节点的childrens属性中
+          typeof parent.children !== "undefined"
+            ? parent.children.push(current)
+            : (parent.children = [current]);
+        }
+      });
+    });
+  };
+  //调用转换方法
+  translator(parents, childrens);
+  //返回最终的结果
+  return parents;
 }
 
 //获取这周的周一
@@ -146,71 +157,18 @@ function getFirstDayOfYear(date) {
 }
 
 //计算单位路径
-function computedDepartmentPath(arr, item) {
-  var tarArr = [];
-  var pathId = item.p_ids + item.department_id;
-
-  var pathIdArr = pathId.split(",");
-  pathIdArr.forEach(ele => {
-    arr.forEach(item => {
-      if (item.id == ele) {
-        tarArr.push(item.label);
-      }
-    });
-  });
-  return tarArr.join("/");
+function computedDepartmentPath(data, id, indexArray) {
+  let arr = Array.from(indexArray);
+  for (let i = 0, len = data.length; i < len; i++) {
+    arr.push(data[i].label);
+    if (data[i].id === id) {
+      return arr;
+    }
+    let children = data[i].children;
+    if (children && children.length) {
+      let result = computedDepartmentPath(children, id, arr);
+      if (result) return result;
+    }
+    arr.pop();
+  }
 }
-
-//生成树状表格结构
-// function generateTabelTree(dataArray, id) {
-//   // console.log(dataArray, id);
-//   var resultArray = []; //一级栏目
-//   var arrResidue = []; //一级栏目
-//   // var arrResidue = [];
-//   var level = 1;
-//   dataArray.forEach(ele => {
-//     if (ele.id == id) {
-//       ele.level = level;
-//       resultArray.push(ele);
-//     }
-//     if (ele.p_id == id) {
-//       var res = loadChildrenData(dataArray, ele, level + 1);
-//       resultArray.push(res);
-//     }
-//   });
-
-//   return resultArray;
-// }
-// function loadChildrenData(originArray, item, level) {
-//   // resultArray.forEach(ele1 => {
-//   //   ele1.children = [];
-//   //   // console.log(ele1.id);
-//   //   arrResidue.forEach(ele2 => {
-//   //     if (ele1.id == ele2.p_id) {
-//   //       ele2.level = level;
-//   //       console.log(ele1.id + "|" + ele2.p_id);
-//   //       ele1.children.push(ele2);
-//   //       // if (!ele1.children) {
-//   //       //   ele1.children = [ele2];
-//   //       // } else {
-//   //       //   ele1.children.push(ele2);
-//   //       // }
-//   //     }
-//   //   });
-//   //   if (ele1.children && ele1.children.length > 0) {
-//   //     loadChildrenData(ele1.children, arrResidue, level + 1);
-//   //   }
-//   // });
-
-//   originArray.forEach(element => {
-//     if (element.p_id == item.id) {
-//       element.level = level;
-//       if (!item.children) {
-//         item.children = [element];
-//       } else {
-//         item.children.push(element);
-//       }
-//     }
-//   });
-//   return item;
-// }

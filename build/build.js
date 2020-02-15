@@ -11,7 +11,6 @@ const webpack = require("webpack");
 const config = require("../config");
 const webpackConfig = require("./webpack.prod.conf");
 const client = require("scp2");
-const client2 = require("scp2");
 
 const spinner = ora("building for production...");
 spinner.start();
@@ -59,7 +58,7 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
         }
       }
     );
-    client2.scp(
+    client.scp(
       "D:\\projects\\yiqing\\dist",
       {
         host: "49.233.70.235",

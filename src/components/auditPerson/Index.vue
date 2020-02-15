@@ -30,7 +30,8 @@
 
 <script>
 import {
-  computedDepartmentPath //计算单位数
+  computedDepartmentPath,
+  generateOptions //计算单位数
 } from "../../assets/js/public";
 import PersonTable from "./PersonTable";
 export default {
@@ -67,7 +68,7 @@ export default {
           departmentId: this.rootId
         })
         .then(res => {
-          this.departmentForPath = res.data; //用来计算单位路径
+          this.departmentForPath = generateOptions(res.data); //用来计算单位路径
           this.loadPerson();
         });
     },
@@ -84,7 +85,8 @@ export default {
           res.data.forEach(ele => {
             ele.departmentPath = computedDepartmentPath(
               this.departmentForPath,
-              ele
+              ele.department_id,
+              []
             );
             switch (+ele.authed) {
               case 1:

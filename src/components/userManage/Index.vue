@@ -129,9 +129,10 @@ export default {
         //计算单位路径
         this.userTableData.forEach(ele => {
           ele.departmentPath = computedDepartmentPath(
-            this.departmentForPath,
-            ele
-          );
+            this.departmentData,
+            ele.department_id,
+            []
+          ).join("/");
         });
       });
     },
