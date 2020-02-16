@@ -4,5 +4,5 @@ const prodEnv = require("./prod.env");
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  API_ROOT: '"/public/cmsv2/"'
+  API_ROOT: '"/public/cmsv3/"'
 });

@@ -81,8 +81,19 @@
               <template slot-scope="scope">
                 <span v-if="scope.row.performance.length > 0">
                   {{
-                    scope.row.performance[0].temp_am
-                      ? scope.row.performance[0].temp_am
+                    scope.row.datePerformance.temp_am
+                      ? scope.row.datePerformance.temp_am
+                      : ""
+                  }}</span
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="中" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.performance.length > 0">
+                  {{
+                    scope.row.datePerformance.temp_noon
+                      ? scope.row.datePerformance.temp_noon
                       : ""
                   }}</span
                 >
@@ -92,8 +103,8 @@
               <template slot-scope="scope">
                 <span v-if="scope.row.performance.length > 0">
                   {{
-                    scope.row.performance[0].temp_pm
-                      ? scope.row.performance[0].temp_pm
+                    scope.row.datePerformance.temp_pm
+                      ? scope.row.datePerformance.temp_pm
                       : ""
                   }}</span
                 >
@@ -105,8 +116,19 @@
               <template slot-scope="scope">
                 <span v-if="scope.row.performance.length > 0">
                   {{
-                    scope.row.performance[0].cough_am
-                      ? scope.row.performance[0].cough_am
+                    scope.row.datePerformance.cough_am
+                      ? scope.row.datePerformance.cough_am
+                      : ""
+                  }}</span
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="中" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.performance.length > 0">
+                  {{
+                    scope.row.datePerformance.cough_noon
+                      ? scope.row.datePerformance.cough_noon
                       : ""
                   }}</span
                 >
@@ -116,8 +138,8 @@
               <template slot-scope="scope">
                 <span v-if="scope.row.performance.length > 0">
                   {{
-                    scope.row.performance[0].cough_pm
-                      ? scope.row.performance[0].cough_pm
+                    scope.row.datePerformance.cough_pm
+                      ? scope.row.datePerformance.cough_pm
                       : ""
                   }}</span
                 >
@@ -129,8 +151,19 @@
               <template slot-scope="scope">
                 <span v-if="scope.row.performance.length > 0">
                   {{
-                    scope.row.performance[0].qicu_am
-                      ? scope.row.performance[0].qicu_am
+                    scope.row.datePerformance.qicu_am
+                      ? scope.row.datePerformance.qicu_am
+                      : ""
+                  }}</span
+                >
+              </template>
+            </el-table-column>
+            <el-table-column label="中" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.performance.length > 0">
+                  {{
+                    scope.row.datePerformance.qicu_noon
+                      ? scope.row.datePerformance.qicu_noon
                       : ""
                   }}</span
                 >
@@ -140,8 +173,8 @@
               <template slot-scope="scope">
                 <span v-if="scope.row.performance.length > 0">
                   {{
-                    scope.row.performance[0].qicu_pm
-                      ? scope.row.performance[0].qicu_pm
+                    scope.row.datePerformance.qicu_pm
+                      ? scope.row.datePerformance.qicu_pm
                       : ""
                   }}</span
                 >
@@ -164,23 +197,21 @@
                 scope.row.qicu
               }}</el-tag>
               <span
-                v-if="
+                v-else-if="
                   !scope.row.dishao &&
                     !scope.row.gaoshao &&
                     !scope.row.cough &&
-                    !scope.row.qicu
+                    !scope.row.qicu &&
+                    scope.row.datePerformance
                 "
               >
-                无
+                正常
               </span>
             </template>
           </el-table-column>
           <el-table-column label="记录时间" align="center" width="100">
             <template slot-scope="scope">
-              <span v-if="scope.row.performance.length > 0">{{
-                scope.row.performance[0].pubdate
-              }}</span>
-              <span type="danger" v-else>未记录</span>
+              <span>{{ scope.row.date }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -240,7 +271,8 @@
 import {
   timestampToTime,
   generateOptions,
-  computedDepartmentPath //计算单位数
+  computedDepartmentPath, //计算单位数
+  getCurrentDate
 } from "../../assets/js/public";
 import EditPerson from "./EditPerson";
 import HandlePerformance from "./HandlePerformance";
@@ -258,7 +290,8 @@ export default {
       currpage: 1,
       loadPersonForm: {
         departmentId: sessionStorage.getItem("departmentId"),
-        authed: 2
+        authed: 2,
+        date: getCurrentDate(1)
       }
     };
   },
@@ -290,52 +323,78 @@ export default {
         .post("handle_person/loadPerson", this.loadPersonForm)
         .then(res => {
           this.personData = res.data;
-          res.data.forEach((ele, index) => {
+          this.personData.forEach((ele, index) => {
+            ele.date = this.loadPersonForm.date;
             ele.index = index + 1;
+            ele.datePerformance = "";
             ele.departmentPath = computedDepartmentPath(
               this.departmentData,
               ele.department_id,
               []
             ).join("/");
-            if (ele.performance.length > 0) {
-              ele.temp_am = ele.performance[0].temp_am;
-              ele.temp_pm = ele.performance[0].temp_pm;
-              ele.cough_am = ele.performance[0].cough_am;
-              ele.cough_pm = ele.performance[0].cough_pm;
-              ele.qicu_am = ele.performance[0].qicu_am;
-              ele.qicu_pm = ele.performance[0].qicu_pm;
+            // 从performance里取出当天的数据
+
+            ele.performance.forEach(inner => {
+              if (inner.pubdate == ele.date) {
+                ele.datePerformance = inner;
+              }
+            });
+
+            if (ele.datePerformance) {
+              //导出excel表时，不支持数组，所有需要处理一下数据
+              ele.temp_am = ele.datePerformance.temp_am;
+              ele.temp_noon = ele.datePerformance.temp_noon;
+              ele.temp_pm = ele.datePerformance.temp_pm;
+              ele.cough_am = ele.datePerformance.cough_am;
+              ele.cough_noon = ele.datePerformance.cough_noon;
+              ele.cough_pm = ele.datePerformance.cough_pm;
+              ele.qicu_am = ele.datePerformance.qicu_am;
+              ele.qicu_noon = ele.datePerformance.qicu_noon;
+              ele.qicu_pm = ele.datePerformance.qicu_pm;
               //低烧
               if (
-                (ele.performance[0].temp_pm > 37.5 &&
-                  ele.performance[0].temp_pm <= 39) ||
-                (!ele.performance[0].temp_pm &&
-                  ele.performance[0].temp_am > 37.5 &&
-                  ele.performance[0].temp_am <= 39)
+                (ele.datePerformance.temp_pm > 37.5 &&
+                  ele.datePerformance.temp_pm <= 39) ||
+                (!ele.datePerformance.temp_pm &&
+                  ele.datePerformance.temp_noon > 37.5 &&
+                  ele.datePerformance.temp_noon <= 39) ||
+                (!ele.datePerformance.temp_pm &&
+                  !ele.datePerformance.temp_noon &&
+                  ele.datePerformance.temp_am > 37.5 &&
+                  ele.datePerformance.temp_am <= 39)
               ) {
-                ele.dishao =
-                  ele.performance[0].temp_pm || ele.performance[0].temp_am;
+                ele.dishao = "低烧";
               }
               // 高烧
               if (
-                ele.performance[0].temp_pm > 39 ||
-                (!ele.performance[0].temp_pm && ele.performance[0].temp_am > 39)
+                ele.datePerformance.temp_pm > 39 ||
+                (!ele.datePerformance.temp_pm &&
+                  ele.datePerformance.temp_noon > 39) ||
+                (!ele.datePerformance.temp_pm &&
+                  !ele.datePerformance.temp_noon &&
+                  ele.datePerformance.temp_am > 39)
               ) {
-                ele.gaoshao =
-                  ele.performance[0].temp_pm || ele.performance[0].temp_am;
+                ele.gaoshao = "高烧";
               }
               //咳嗽
               if (
-                ele.performance[0].cough_pm == "是" ||
-                (!ele.performance[0].cough_pm &&
-                  ele.performance[0].cough_am == "是")
+                ele.datePerformance.cough_pm == "是" ||
+                (!ele.datePerformance.cough_pm &&
+                  ele.datePerformance.cough_noon == "是") ||
+                (!ele.datePerformance.cough_pm &&
+                  !ele.datePerformance.cough_noon &&
+                  ele.datePerformance.cough_am == "是")
               ) {
                 ele.cough = "咳嗽";
               }
               //气促
               if (
-                ele.performance[0].qicu_pm == "是" ||
-                (!ele.performance[0].qicu_pm &&
-                  ele.performance[0].qicu_am == "是")
+                ele.datePerformance.qicu_pm == "是" ||
+                (!ele.datePerformance.qicu_pm &&
+                  ele.datePerformance.qicu_noon == "是") ||
+                (!ele.datePerformance.qicu_pm &&
+                  !ele.datePerformance.qicu_noon &&
+                  ele.datePerformance.qicu_am == "是")
               ) {
                 ele.qicu = "气促";
               }

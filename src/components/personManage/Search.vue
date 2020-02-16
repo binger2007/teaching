@@ -34,6 +34,15 @@
       <el-form-item>
         <el-checkbox v-model="form.qicu">气促</el-checkbox>
       </el-form-item>
+      <el-form-item label="选择日期" prop="department">
+        <el-date-picker
+          v-model="form.date"
+          type="date"
+          value-format="yyyy-MM-dd"
+          placeholder="选择日期"
+        >
+        </el-date-picker>
+      </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="onSearch">查询</el-button>
@@ -67,7 +76,8 @@ export default {
         fashao: false,
         cough: false,
         qicu: false,
-        authed: 2
+        authed: 2,
+        date: getCurrentDate(1)
       },
       departmentData: [],
       options: [
