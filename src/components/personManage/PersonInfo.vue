@@ -42,6 +42,22 @@
               }}</el-tag>
             </template>
           </el-table-column>
+          <el-table-column align="center" label="中" width="70">
+            <template slot-scope="scope">
+              <el-tag
+                v-if="scope.row.temp_noon <= 37.5 && scope.row.temp_noon"
+                >{{ scope.row.temp_noon }}</el-tag
+              >
+              <el-tag
+                type="warning"
+                v-if="scope.row.temp_noon > 37.5 && scope.row.temp_noon <= 39"
+                >{{ scope.row.temp_noon }}</el-tag
+              >
+              <el-tag type="danger" v-if="scope.row.temp_noon > 39">{{
+                scope.row.temp_noon
+              }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column align="center" label="晚" width="70">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.temp_pm <= 37.5 && scope.row.temp_pm">{{
@@ -69,6 +85,16 @@
               }}</el-tag>
             </template>
           </el-table-column>
+          <el-table-column align="center" label="中" width="70">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.cough_noon == '否'">{{
+                scope.row.cough_noon
+              }}</el-tag>
+              <el-tag type="warning" v-if="scope.row.cough_noon == '是'">{{
+                scope.row.cough_noon
+              }}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column align="center" label="晚" width="70">
             <template slot-scope="scope">
               <el-tag v-if="scope.row.cough_pm == '否'">{{
@@ -88,6 +114,16 @@
               }}</el-tag>
               <el-tag type="danger" v-if="scope.row.qicu_am == '是'">{{
                 scope.row.qicu_am
+              }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="中" width="70">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.qicu_noon == '否'">{{
+                scope.row.qicu_noon
+              }}</el-tag>
+              <el-tag type="danger" v-if="scope.row.qicu_noon == '是'">{{
+                scope.row.qicu_noon
               }}</el-tag>
             </template>
           </el-table-column>

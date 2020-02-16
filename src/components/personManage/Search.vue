@@ -102,11 +102,15 @@ export default {
         旅居史: "lvju",
         接触史: "jiechu",
         早体温: "temp_am",
+        中体温: "temp_noon",
         晚体温: "temp_pm",
         早咳嗽: "cough_am",
+        中咳嗽: "cough_noon",
         晚咳嗽: "cough_pm",
         早气促: "qicu_am",
-        晚气促: "qicu_am",
+        中气促: "qicu_noon",
+        晚气促: "qicu_pm",
+        记录时间: "date",
         备注: "remark"
       },
       json_meta: [
@@ -116,15 +120,21 @@ export default {
             " value ": " utf- 8 "
           }
         ]
-      ],
-      fileName:
-        sessionStorage.getItem("departmentName") +
-        "健康日报（" +
-        getCurrentDate(1) +
-        ").xls"
+      ]
     };
   },
   props: ["personData"],
+  computed: {
+    // 计算属性的 getter
+    fileName: function() {
+      return (
+        sessionStorage.getItem("departmentName") +
+        "健康日报（" +
+        this.form.date +
+        ").xls"
+      );
+    }
+  },
   mounted() {
     // this.onDataOut();
   },

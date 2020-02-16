@@ -46,6 +46,12 @@
           <el-button @click="resetForm('loginRuleForm')">重置</el-button>
         </el-form-item>
       </el-form>
+      <el-link
+        type="danger"
+        style="text-align: center;width:100%;"
+        href="https://www.google.cn/chrome/"
+        >如果您无法登录后台或显示有问题，请点击下载下载谷歌</el-link
+      >
     </el-card>
   </div>
 </template>
@@ -139,9 +145,9 @@ h1 {
 }
 .wrap {
   width: 100vw;
-  height: 90vh;
-  padding-top: 10vh;
-  background-color: #f2f6fc;
+  /* height: 90vh; */
+  padding-top: 120px;
+  /* background-color: #f2f6fc; */
 }
 .box-card {
   width: 500px;
@@ -150,9 +156,9 @@ h1 {
 }
 .code {
   text-align: center;
-  margin-bottom: 5vh;
+  margin-bottom: 30px;
 }
 .code img {
-  height: 25vh;
+  height: 150px;
 }
 </style>

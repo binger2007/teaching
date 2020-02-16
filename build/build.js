@@ -74,21 +74,21 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
         }
       }
     );
-    client2.scp(
-      "D:\\projects\\yiqing\\api\\application",
-      {
-        host: "49.233.70.235",
-        username: "root",
-        password: "xxzxB105_2012",
-        path: "/www/wwwroot/howeaver.cn/api/application/"
-      },
-      function(err) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("api上传完毕!\n");
-        }
-      }
-    );
+    // client2.scp(
+    //   "D:\\projects\\newapi\\application",
+    //   {
+    //     host: "49.233.70.235",
+    //     username: "root",
+    //     password: "xxzxB105_2012",
+    //     path: "/www/wwwroot/howeaver.cn/api/application/"
+    //   },
+    //   function(err) {
+    //     if (err) {
+    //       console.log(err);
+    //     } else {
+    //       console.log("api上传完毕!\n");
+    //     }
+    //   }
+    // );
   });
 });
