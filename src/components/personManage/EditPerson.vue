@@ -133,7 +133,7 @@ export default {
                   message: "保存成功",
                   type: "success"
                 });
-                this.$parent.loadPerson();
+                this.$parent.$parent.loadPerson();
                 // this.loadPerson();
               } else {
                 this.$message.error("不成功！当前单位出现重名");

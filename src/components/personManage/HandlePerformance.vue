@@ -104,13 +104,12 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          // console.log(this.form);
           if (this.form.pubdate.length != 11) {
             this.form.pubdate = dateToTime(this.form.pubdate);
           }
           this.$Axios.post("handle_performance/add", this.form).then(res => {
             if (res.data) {
-              this.$parent.loadPerson();
+              this.$parent.$parent.loadPerson();
               this.$message({
                 message: "保存成功",
                 type: "success"

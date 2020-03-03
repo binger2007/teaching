@@ -58,11 +58,14 @@
           <el-button type="success">导出EXCEL</el-button>
         </download-excel>
       </el-form-item>
+      <el-form-item>
+        <button @click="exportExcel">导出EXCEL</button>
+      </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
-import { getCurrentDate } from "../../assets/js/public";
+import { getCurrentDate, computedDepartmentPath } from "../../assets/js/public";
 export default {
   name: "search",
   data() {
@@ -80,6 +83,7 @@ export default {
         date: getCurrentDate(1)
       },
       departmentData: [],
+      departmentList: [],
       options: [
         { name: "全部", value: "" },
         { name: "在位", value: "在位" },
@@ -144,6 +148,113 @@ export default {
     },
     onSearch() {
       this.$emit("onSearch", this.form);
+    },
+    // exportExcel() {
+    //   this.loadPerson().then(res => {
+    //     console.log(JSON.stringify(res));
+    //     this.$Axios({
+    //       method: "POST",
+    //       header: { "Content-Type": "application/xls" }, // http请求类型
+    //       responseType: "blob", // 返回格式，默认json，可选arraybuffer、blob、document、json、text、stream
+    //       url: "handle_person/downExcel",
+    //       data: {
+    //         list: " JSON.stringify(res)"
+    //       }
+    //     })
+    //       .then(res => {
+    //         console.log(res);
+    //         //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet这里表示xlsx类型
+    //         // let blob = new Blob([res.data], {
+    //         //   type:
+    //         //     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+    //         // });
+    //         // let downloadElement = document.createElement("a");
+    //         // let href = window.URL.createObjectURL(blob);
+    //         // downloadElement.href = href;
+    //         // downloadElement.download = this.fileName;
+    //         // document.body.appendChild(downloadElement);
+    //         // downloadElement.click();
+    //         // document.body.removeChild(downloadElement);
+    //         // window.URL.revokeObjectURL(href);
+    //       })
+    //       .catch(err => {
+    //         this.$message.error("服务器连接错误！");
+    //       });
+    //   });
+    // },
+    exportExcel() {
+      delete this.form.cpage;
+      delete this.form.ppage;
+      this.form.downExcel = true;
+      var arr = [];
+      this.departmentList.forEach(ele => {
+        arr.push({
+          id: ele.id,
+          departmentPath: ele.departmentPath
+        });
+      });
+      this.form.departmentList = JSON.stringify(arr);
+      this.$Axios({
+        method: "POST",
+        // header: { "Content-Type": "application/xls" }, // http请求类型
+        // responseType: "blob", // 返回格式，默认json，可选arraybuffer、blob、document、json、text、stream
+        url: "handle_person/loadPerson",
+        data: this.form
+      }).then(res => {
+        // let blob = new Blob([res.data], {
+        //   type:
+        //     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+        // });
+        // let downloadElement = document.createElement("a");
+        // let href = window.URL.createObjectURL(blob);
+        // downloadElement.href = href;
+        // downloadElement.download = this.fileName;
+        // document.body.appendChild(downloadElement);
+        // downloadElement.click();
+        // document.body.removeChild(downloadElement);
+        // window.URL.revokeObjectURL(href);
+      });
+
+      // return new Promise((resolve, reject) => {
+      //   delete this.form.cpage;
+      //   delete this.form.ppage;
+      //   this.$Axios.post("handle_person/loadPerson", this.form).then(res => {
+      //     res.data.forEach(ele => {
+      //       ele.departmentPath = computedDepartmentPath(
+      //         this.departmentList,
+      //         ele.department_id
+      //       );
+      //     });
+      //     resolve(res.data);
+      //   });
+      // });
+
+      // this.form.downExcel = true;
+      // this.$Axios({
+      //   method: "POST",
+      //   header: { "Content-Type": "application/xls" }, // http请求类型
+      //   responseType: "blob", // 返回格式，默认json，可选arraybuffer、blob、document、json、text、stream
+      //   url: "handle_person/loadPerson",
+      //   data: this.form
+      // })
+      //   .then(res => {
+      //     //application/vnd.openxmlformats-officedocument.spreadsheetml.sheet这里表示xlsx类型
+      //     let blob = new Blob([res.data], {
+      //       type:
+      //         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+      //     });
+      //     let downloadElement = document.createElement("a");
+      //     let href = window.URL.createObjectURL(blob);
+      //     downloadElement.href = href;
+      //     downloadElement.download = this.fileName;
+      //     document.body.appendChild(downloadElement);
+      //     downloadElement.click();
+      //     document.body.removeChild(downloadElement);
+      //     window.URL.revokeObjectURL(href);
+      //   })
+      //   .catch(err => {
+      //     this.$message.error("服务器连接错误！");
+      //   });
     }
   }
 };

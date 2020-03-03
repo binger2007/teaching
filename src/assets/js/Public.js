@@ -107,8 +107,10 @@ function dateToTime(date, showHours) {
  * 接收一个具有父子关系的数组作为参数
  * 返回一个树形结构的数组
  */
-function generateOptions(data) {
+function generateOptions(data, type) {
+  //type是返回树状结构还是列表结构，false:树状结构，true列表结构
   //没有父节点的数据
+  let arr = [];
   let departmentId = sessionStorage.getItem("departmentId");
   let parents = data.filter(
     value => value.id == departmentId || value.id == null
@@ -121,7 +123,11 @@ function generateOptions(data) {
   let translator = (parents, childrens) => {
     //遍历父节点数据
     parents.forEach(parent => {
+      arr.push(parent);
       parent.value = parent.id;
+      parent.departmentPath = parent.departmentPath
+        ? parent.departmentPath
+        : parent.label;
       //遍历子节点数据
       childrens.forEach((current, index) => {
         //此时找到父节点对应的一个子节点
@@ -131,11 +137,15 @@ function generateOptions(data) {
           //让当前子节点从temp中移除，temp作为新的子节点数据，这里是为了让递归时，子节点的遍历次数更少，如果父子关系的层级越多，越有利
           temp.splice(index, 1);
           //让当前子节点作为唯一的父节点，去递归查找其对应的子节点
+          current.departmentPath = parent.departmentPath + "/" + current.label;
           translator([current], temp);
           //把找到子节点放入父节点的childrens属性中
           typeof parent.children !== "undefined"
             ? parent.children.push(current)
             : (parent.children = [current]);
+          if (JSON.stringify(arr).indexOf(JSON.stringify(current)) == -1) {
+            arr.push(current); // 将对象添加到数组中(后增)
+          }
         }
       });
     });
@@ -143,7 +153,7 @@ function generateOptions(data) {
   //调用转换方法
   translator(parents, childrens);
   //返回最终的结果
-  return parents;
+  return [parents, arr];
 }
 
 //获取这周的周一
@@ -184,18 +194,25 @@ function getFirstDayOfYear(date) {
 }
 
 //计算单位路径
-function computedDepartmentPath(data, id, indexArray) {
-  let arr = Array.from(indexArray);
-  for (let i = 0, len = data.length; i < len; i++) {
-    arr.push(data[i].label);
-    if (data[i].id === id) {
-      return arr;
+function computedDepartmentPath(data, id) {
+  var departmentPath;
+  data.forEach(ele => {
+    if (ele.id == id) {
+      departmentPath = ele.departmentPath;
     }
-    let children = data[i].children;
-    if (children && children.length) {
-      let result = computedDepartmentPath(children, id, arr);
-      if (result) return result;
-    }
-    arr.pop();
-  }
+  });
+  return departmentPath;
+  // let arr = Array.from(indexArray);
+  // for (let i = 0, len = data.length; i < len; i++) {
+  //   arr.push(data[i].label);
+  //   if (data[i].id === id) {
+  //     return arr;
+  //   }
+  //   let children = data[i].children;
+  //   if (children && children.length) {
+  //     let result = computedDepartmentPath(children, id, arr);
+  //     if (result) return result;
+  //   }
+  //   arr.pop();
+  // }
 }
