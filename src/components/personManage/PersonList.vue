@@ -318,7 +318,7 @@
             fixed="right"
             align="center"
             label="操作"
-            width="100"
+            width="200"
           >
             <template slot-scope="scope">
               <!-- <el-button
@@ -333,6 +333,12 @@
                 size="small"
                 >编辑</el-button
               > -->
+              <el-button
+                @click="openCard(scope.row)"
+                type="success"
+                size="small"
+                >查看健康卡</el-button
+              >
               <el-button
                 @click="delPerson(scope.row)"
                 type="danger"
@@ -367,6 +373,7 @@
     <HandlePerformance ref="handlePerformance"></HandlePerformance>
     <!-- 显示人员状态 -->
     <PersonInfo ref="personInfo" :personData="personData"></PersonInfo>
+    <OpenCard ref="OpenCard"></OpenCard>
   </div>
 </template>
 
@@ -374,6 +381,7 @@
 import EditPerson from "./EditPerson";
 import HandlePerformance from "./HandlePerformance";
 import PersonInfo from "./PersonInfo";
+import OpenCard from "./OpenCard";
 export default {
   name: "help",
   data() {
@@ -388,7 +396,8 @@ export default {
   components: {
     EditPerson,
     HandlePerformance,
-    PersonInfo
+    PersonInfo,
+    OpenCard
   },
   methods: {
     //处理分页
@@ -436,6 +445,11 @@ export default {
       this.$refs.personInfo.dialogFormVisible = true;
       this.$refs.personInfo.info = row;
       // this.$refs.personInfo.loadPersonInfo(person.Id);
+    },
+    //查看健康卡
+    openCard(row) {
+      this.$refs.OpenCard.dialogVisible = true;
+      this.$refs.OpenCard.info = row;
     }
   }
 };
