@@ -9,7 +9,7 @@
           :placeholder="departmentName"
         ></el-cascader>
       </el-form-item>
-      <el-form-item label="人员状态">
+      <!-- <el-form-item label="人员状态">
         <el-select v-model="form.status" placeholder="请选择活动区域">
           <el-option
             v-for="(item, index) in options"
@@ -18,8 +18,8 @@
             :key="index"
           ></el-option>
         </el-select>
-      </el-form-item>
-      <el-form-item>
+      </el-form-item> -->
+      <!-- <el-form-item>
         <el-checkbox v-model="form.lvju">旅居史</el-checkbox>
       </el-form-item>
       <el-form-item>
@@ -33,7 +33,7 @@
       </el-form-item>
       <el-form-item>
         <el-checkbox v-model="form.qicu">气促</el-checkbox>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="选择日期" prop="department">
         <el-date-picker
           v-model="form.date"

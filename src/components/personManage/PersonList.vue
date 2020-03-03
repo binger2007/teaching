@@ -4,12 +4,12 @@
       <el-col :span="24">
         <!-- 人员列表 -->
         <el-table border :data="personData" style="width: 100%" stripe>
-          <el-table-column type="index" width="50" align="center">
+          <el-table-column type="index" width="50" align="center" fixed="left">
             <template slot-scope="scope">
               {{ scope.row.index + (currpage - 1) * pagesize }}
             </template>
           </el-table-column>
-          <el-table-column label="姓名" width="80" align="center">
+          <el-table-column label="姓名" width="80" align="center" fixed="left">
             <template slot-scope="scope">
               <el-link @click="openPersonInfo(scope.row)" type="primary">{{
                 scope.row.name
@@ -28,6 +28,37 @@
           >
           </el-table-column>
           <el-table-column
+            show-overflow-tooltip
+            label="家庭住址"
+            prop="address"
+            width="150"
+          >
+          </el-table-column>
+          <el-table-column
+            show-overflow-tooltip
+            label="家庭成员数量"
+            align="center"
+            prop="members"
+            width="50"
+          >
+          </el-table-column>
+          <el-table-column
+            show-overflow-tooltip
+            label="联系电话"
+            align="center"
+            prop="tel"
+            width="150"
+          >
+          </el-table-column>
+          <el-table-column
+            show-overflow-tooltip
+            label="检测人"
+            align="center"
+            prop="jianceren"
+            width="80"
+          >
+          </el-table-column>
+          <!-- <el-table-column
             label="人员状态"
             align="center"
             sortable
@@ -46,8 +77,78 @@
               }}</el-tag>
               <el-tag v-else>{{ scope.row.status }}</el-tag>
             </template>
+          </el-table-column> -->
+
+          <el-table-column label="本人是否“四类人员”" align="center">
+            <el-table-column label="确诊" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.selfQuezhen == 1" style="color:#F56C6C"
+                  >是</span
+                >
+                <span v-else> 否</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="疑似" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.selfYisi == 1" style="color:#F56C6C">
+                  是</span
+                >
+                <span v-else> 否</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="密切接触者" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.selfMiqie == 1" style="color:#F56C6C">
+                  是</span
+                >
+                <span v-else> 否</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="发热人员" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.selfFare == 1" style="color:#F56C6C">
+                  是</span
+                >
+                <span v-else> 否</span>
+              </template>
+            </el-table-column>
           </el-table-column>
-          <el-table-column
+          <el-table-column label="家庭成员是否“四类人员”" align="center">
+            <el-table-column label="确诊" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.homeQuezhen == 1" style="color:#F56C6C"
+                  >是</span
+                >
+                <span v-else> 否</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="疑似" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.homeYisi == 1" style="color:#F56C6C">
+                  是</span
+                >
+                <span v-else> 否</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="密切接触者" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.homeMiqie == 1" style="color:#F56C6C">
+                  是</span
+                >
+                <span v-else> 否</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="发热人员" align="center" width="60">
+              <template slot-scope="scope">
+                <span v-if="scope.row.homeFare == 1" style="color:#F56C6C">
+                  是</span
+                >
+                <span v-else> 否</span>
+              </template>
+            </el-table-column>
+          </el-table-column>
+
+          <!-- <el-table-column
             label="旅居史"
             align="center"
             sortable
@@ -74,7 +175,7 @@
               }}</el-tag>
               <el-tag type="danger" v-else>{{ scope.row.jiechu }}</el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="体温" align="center">
             <el-table-column label="早" align="center" width="60">
               <template slot-scope="scope">
