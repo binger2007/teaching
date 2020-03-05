@@ -318,7 +318,7 @@
             fixed="right"
             align="center"
             label="操作"
-            width="200"
+            width="300"
           >
             <template slot-scope="scope">
               <!-- <el-button
@@ -338,6 +338,12 @@
                 type="success"
                 size="small"
                 >查看健康卡</el-button
+              >
+              <el-button
+                @click="exportToWord(scope.row)"
+                type="primary"
+                size="small"
+                >导出健康卡</el-button
               >
               <el-button
                 @click="delPerson(scope.row)"
@@ -373,7 +379,7 @@
     <HandlePerformance ref="handlePerformance"></HandlePerformance>
     <!-- 显示人员状态 -->
     <PersonInfo ref="personInfo" :personData="personData"></PersonInfo>
-    <OpenCard ref="OpenCard"></OpenCard>
+    <OpenCard ref="OpenCard" :key="timer"></OpenCard>
   </div>
 </template>
 
@@ -382,6 +388,11 @@ import EditPerson from "./EditPerson";
 import HandlePerformance from "./HandlePerformance";
 import PersonInfo from "./PersonInfo";
 import OpenCard from "./OpenCard";
+//导出word相关
+import "docxtemplater/build/docxtemplater.js";
+import "pizzip/dist/pizzip.js";
+import "pizzip/dist/pizzip-utils.js";
+import "file-saver";
 export default {
   name: "help",
   data() {
@@ -390,7 +401,10 @@ export default {
       total: 0,
       pagesize: 10,
       currpage: 1,
-      departmentData: []
+      departmentData: [],
+      // 加载所有单位信息，目的计算学校，班级路径
+      departmentDataAll: [],
+      timer: 0
     };
   },
   components: {
@@ -448,8 +462,105 @@ export default {
     },
     //查看健康卡
     openCard(row) {
-      this.$refs.OpenCard.dialogVisible = true;
-      this.$refs.OpenCard.info = row;
+      this.timer++;
+      this.$nextTick(() => {
+        this.$refs.OpenCard.dialogVisible = true;
+        this.$refs.OpenCard.info = row;
+        this.departmentDataAll.forEach(ele => {
+          if (ele.id == row.department_id) {
+            this.$refs.OpenCard.departmentArr = ele.departmentPath.split("/");
+          }
+        });
+        //把体温数据分成每份2个
+        var arr = [];
+        var performance = row.performance.reverse();
+        for (var i = 0, len = performance.length; i < len; i += 2) {
+          arr.push(performance.slice(i, i + 2));
+        }
+        this.$refs.OpenCard.performance = arr;
+      });
+    },
+    // 导出word
+    loadFile(url, callback) {
+      PizZipUtils.getBinaryContent(url, callback);
+    },
+    exportToWord(row) {
+      var wordData = {};
+      this.departmentDataAll.forEach(ele => {
+        if (ele.id == row.department_id) {
+          wordData.departmentArr = ele.departmentPath.split("/");
+        }
+      });
+      wordData.performance = [];
+      var performance = row.performance.reverse();
+      // var performance = row.performance;
+      for (var i = 0, len = performance.length; i < len; i += 2) {
+        // arr.push(performance.slice(i, i + 2));
+        var arr = performance.slice(i, i + 2);
+        var obj = {};
+        obj.d0 = arr[0].pubdate ? arr[0].pubdate : "";
+        obj.d0T0 = arr[0].temp_am ? arr[0].temp_am + "℃" : "";
+        obj.d0T1 = arr[0].temp_noon ? arr[0].temp_noon + "℃" : "";
+        if (arr.length > 1) {
+          obj.d1 = arr[1].pubdate ? arr[1].pubdate : "";
+          obj.d1T0 = arr[1].temp_am ? arr[1].temp_am + "℃" : "";
+          obj.d1T1 = arr[1].temp_noon ? arr[1].temp_noon + "℃" : "";
+        } else {
+          obj.d1 = "";
+          obj.d1T0 = "";
+          obj.d1T1 = "";
+        }
+        wordData.performance.push(obj);
+      }
+      if (wordData.performance.length < 16) {
+        for (var i = 0, len = 16 - wordData.performance.length; i < len; i++) {
+          wordData.performance.push({
+            d0: "",
+            d0T0: "",
+            d0T1: "",
+            d1: "",
+            d1T0: "",
+            d1T1: ""
+          });
+        }
+      }
+      wordData.info = row;
+      wordData.name = row.name;
+      this.loadFile("../../../static/word.docx", (error, content) => {
+        if (error) {
+          throw error;
+        }
+        var zip = new PizZip(content);
+        var doc = new window.docxtemplater().loadZip(zip);
+        doc.setData({
+          ...wordData
+        });
+        try {
+          // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+          doc.render();
+        } catch (error) {
+          var e = {
+            message: error.message,
+            name: error.name,
+            stack: error.stack,
+            properties: error.properties
+          };
+          console.log(
+            JSON.stringify({
+              error: e
+            })
+          );
+          // The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
+          throw error;
+        }
+        var out = doc.getZip().generate({
+          type: "blob",
+          mimeType:
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        }); //Output the document using Data-URI
+        saveAs(out, "output.docx");
+      });
+      console.log(wordData);
     }
   }
 };

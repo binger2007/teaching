@@ -10,11 +10,11 @@
         ></el-cascader>
       </el-form-item>
       <el-form-item>
-        <el-checkbox v-model="form.selfHealth">本人是否“四类人员”</el-checkbox>
+        <el-checkbox v-model="form.selfHealth">本人为“四类人员”</el-checkbox>
       </el-form-item>
       <el-form-item>
         <el-checkbox v-model="form.homeHealth"
-          >家庭成员是否“四类人员”</el-checkbox
+          >家庭成员为“四类人员”</el-checkbox
         >
       </el-form-item>
       <!-- <el-form-item label="人员状态">

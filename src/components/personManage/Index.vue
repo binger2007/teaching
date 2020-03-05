@@ -36,6 +36,8 @@ export default {
   },
   mounted() {
     this.loadDepartment();
+    //加载所有单位信息，目的计算学校，班级路径
+    this.loadDepartmentAll();
   },
   methods: {
     //初始化组件人员信息
@@ -59,6 +61,20 @@ export default {
             cpage: 1,
             ppage: 10
           });
+        });
+    },
+    //加载所有单位信息，目的计算学校，班级路径
+    loadDepartmentAll() {
+      this.$Axios
+        .post("handle_department/loadDepartment", {
+          departmentId: 46
+        })
+        .then(res => {
+          // 用在列表上，所以需要的是非树状结构
+          this.$refs.PersonList.departmentDataAll = generateOptions(
+            res.data,
+            46
+          )[1];
         });
     },
     //加载人员

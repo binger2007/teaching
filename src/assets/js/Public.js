@@ -107,11 +107,11 @@ function dateToTime(date, showHours) {
  * 接收一个具有父子关系的数组作为参数
  * 返回一个树形结构的数组
  */
-function generateOptions(data, type) {
+function generateOptions(data, fid) {
   //type是返回树状结构还是列表结构，false:树状结构，true列表结构
   //没有父节点的数据
   let arr = [];
-  let departmentId = sessionStorage.getItem("departmentId");
+  let departmentId = fid ? fid : sessionStorage.getItem("departmentId");
   let parents = data.filter(
     value => value.id == departmentId || value.id == null
   );

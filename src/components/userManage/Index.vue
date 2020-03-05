@@ -20,11 +20,11 @@
         label="用户名"
         align="center"
       ></el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="utype"
         label="类别"
         align="center"
-      ></el-table-column>
+      ></el-table-column> -->
       <el-table-column prop="departmentPath" label="管理单位"></el-table-column>
 
       <el-table-column label="最后登陆时间" width="220" align="center">
@@ -117,7 +117,7 @@ export default {
         })
         .then(res => {
           this.departmentForPath = res.data; //用来计算单位路径
-          this.departmentData = generateOptions(res.data);
+          this.departmentData = generateOptions(res.data)[1];
           //先加载单位数据，再加载用户数据，因为用户数据需要计算单位路径
           this.loadUserList();
         });
@@ -130,9 +130,8 @@ export default {
         this.userTableData.forEach(ele => {
           ele.departmentPath = computedDepartmentPath(
             this.departmentData,
-            ele.department_id,
-            []
-          ).join("/");
+            ele.department_id
+          );
         });
       });
     },
