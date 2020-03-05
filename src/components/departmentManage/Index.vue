@@ -113,7 +113,7 @@ export default {
           userType: this.userType
         })
         .then(res => {
-          this.treeData = generateOptions(res.data);
+          this.treeData = generateOptions(res.data)[0];
         });
     },
     // 添加节点
