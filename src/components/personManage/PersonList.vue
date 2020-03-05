@@ -486,11 +486,13 @@ export default {
     },
     exportToWord(row) {
       var wordData = {};
+      var departmentArr = [];
       this.departmentDataAll.forEach(ele => {
         if (ele.id == row.department_id) {
-          wordData.departmentArr = ele.departmentPath.split("/");
+          departmentArr = ele.departmentPath.split("/");
         }
       });
+      //处理体温数据
       wordData.performance = [];
       var performance = row.performance.reverse();
       // var performance = row.performance;
@@ -524,8 +526,93 @@ export default {
           });
         }
       }
-      wordData.info = row;
+
+      var sex = "";
+      if (row.sex == "男") {
+        sex = "男√  女 ";
+      } else {
+        sex = "男  女√";
+      }
       wordData.name = row.name;
+      wordData.sex = sex;
+      wordData.label = row.label;
+      wordData.address = row.address;
+      wordData.members = row.members;
+      wordData.tel = row.tel;
+      wordData.jianceren = row.jianceren;
+      wordData.classify =
+        row.classify == 0 ? "教职工" : row.classify == 1 ? "学生" : "";
+      wordData.school = departmentArr[departmentArr.length - 3];
+      wordData.banji =
+        departmentArr[departmentArr.length - 2] +
+        departmentArr[departmentArr.length - 1];
+      wordData.city = departmentArr[departmentArr.length - 5];
+      wordData.area = departmentArr[departmentArr.length - 4]; //处理人员状态
+      var selfStatus = "";
+      var homeStatus = "";
+      if (row.selfQuezhen) {
+        selfStatus += "确诊√  ";
+      } else {
+        selfStatus += "确诊    ";
+      }
+      if (row.selfYisi) {
+        selfStatus += "疑似√  ";
+      } else {
+        selfStatus += "疑似    ";
+      }
+      if (row.selfMiqie) {
+        selfStatus += "密切接触者√  ";
+      } else {
+        selfStatus += "密切接触者   ";
+      }
+      if (row.selfFare) {
+        selfStatus += "发热人员√  ";
+      } else {
+        selfStatus += "发热人员    ";
+      }
+      if (
+        !row.selfQuezhen &&
+        !row.selfYisi &&
+        !row.selfMiqie &&
+        !row.selfFare
+      ) {
+        selfStatus += "否√";
+      } else {
+        selfStatus += "否  ";
+      }
+      wordData.selfStatus = selfStatus;
+
+      if (row.homeQuezhen) {
+        homeStatus += "确诊√  ";
+      } else {
+        homeStatus += "确诊    ";
+      }
+      if (row.homeYisi) {
+        homeStatus += "疑似√  ";
+      } else {
+        homeStatus += "疑似    ";
+      }
+      if (row.homeMiqie) {
+        homeStatus += "密切接触者√  ";
+      } else {
+        homeStatus += "密切接触者    ";
+      }
+      if (row.homeFare) {
+        homeStatus += "发热人员√  ";
+      } else {
+        homeStatus += "发热人员    ";
+      }
+      if (
+        !row.homeQuezhen &&
+        !row.homeYisi &&
+        !row.homeMiqie &&
+        !row.homeFare
+      ) {
+        homeStatus += "否√";
+      } else {
+        homeStatus += "否  ";
+      }
+      wordData.homeStatus = homeStatus;
       this.loadFile("../../../static/word.docx", (error, content) => {
         if (error) {
           throw error;
@@ -560,7 +647,6 @@ export default {
         }); //Output the document using Data-URI
         saveAs(out, "output.docx");
       });
-      console.log(wordData);
     }
   }
 };
