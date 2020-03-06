@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <el-table :data="tableData" stripe style="width: 100%">
+    <el-table :data="tableData.data" stripe style="width: 100%">
       <el-table-column type="index" label="序号" width="50" align="center">
       </el-table-column>
       <el-table-column label="头像" width="100" align="center">
@@ -62,6 +62,14 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      style="margin-top:20px;"
+      background
+      layout="prev, pager, next"
+      :total="+tableData.total"
+      @current-change="handleCurrentChange"
+    >
+    </el-pagination>
   </div>
 </template>
 
@@ -84,6 +92,22 @@ export default {
           this.$message("操作成功");
           this.$emit("successChange");
         });
+    },
+    //处理分页
+    handleCurrentChange(cpage) {
+      // console.log(cpage);
+      this.$emit("pageChange", {
+        cpage: cpage,
+        total: this.tableData.total,
+        classify: this.tableData.classify,
+        type: this.tableData.type
+      });
+      // this.currpage = cpage;
+      // this.$emit("changPage", {
+      //   cpage: cpage,
+      //   ppage: 10,
+      //   total: this.total
+      // });
     }
   },
   props: ["tableData", "statusType"]

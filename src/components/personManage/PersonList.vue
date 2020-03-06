@@ -645,7 +645,7 @@ export default {
           mimeType:
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         }); //Output the document using Data-URI
-        saveAs(out, "output.docx");
+        saveAs(out, row.name + "健康动态监测卡.docx");
       });
     }
   }

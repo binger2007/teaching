@@ -6,6 +6,7 @@
           @successChange="loadPerson"
           statusType="pendingData"
           :tableData="pendingData"
+          @pageChange="pageChange"
         >
           <template></template>
         </PersonTable>
@@ -15,6 +16,7 @@
           statusType="auditedData"
           :tableData="auditedData"
           @successChange="loadPerson"
+          @pageChange="pageChange"
         ></PersonTable
       ></el-tab-pane>
       <el-tab-pane label="未通过" name="third"
@@ -22,6 +24,7 @@
           statusType="refuseData"
           :tableData="refuseData"
           @successChange="loadPerson"
+          @pageChange="pageChange"
         ></PersonTable
       ></el-tab-pane>
     </el-tabs>
@@ -42,11 +45,26 @@ export default {
       departmentForPath: [],
       activeName: "first",
       //待审核
-      pendingData: [],
+      pendingData: {
+        total: "",
+        data: [],
+        type: "pendingData",
+        classify: 1
+      },
       //已审核
-      auditedData: [],
+      auditedData: {
+        total: "",
+        data: [],
+        type: "auditedData",
+        classify: 2
+      },
       //审核不通过
-      refuseData: []
+      refuseData: {
+        total: "",
+        data: [],
+        type: "refuseData",
+        classify: 3
+      }
     };
   },
   components: {
@@ -68,41 +86,56 @@ export default {
           departmentId: this.rootId
         })
         .then(res => {
-          this.departmentForPath = generateOptions(res.data); //用来计算单位路径
-          this.loadPerson();
+          this.departmentForPath = generateOptions(res.data)[1]; //用来计算单位路径
+          this.loadPerson({
+            type: "pendingData",
+            classify: 1
+          });
+          this.loadPerson({
+            type: "auditedData",
+            classify: 2
+          });
+          this.loadPerson({
+            type: "refuseData",
+            classify: 3
+          });
         });
     },
     //加载人员
-    loadPerson() {
-      this.pendingData = [];
-      this.auditedData = [];
-      this.refuseData = [];
+    loadPerson(pars) {
+      var obj = {
+        type: "auditedData",
+        classify: 2,
+        cpage: 1,
+        ppage: 10
+      };
+      Object.assign(obj, pars);
+      this[obj.type]["data"] = [];
       this.$Axios
         .post("handle_person/loadPerson", {
-          departmentId: this.rootId
+          departmentId: this.rootId,
+          authed: obj.classify,
+          cpage: obj.cpage,
+          ppage: obj.ppage
         })
         .then(res => {
-          res.data.forEach(ele => {
+          res.data["list"].forEach(ele => {
             ele.departmentPath = computedDepartmentPath(
               this.departmentForPath,
-              ele.department_id,
-              []
+              ele.department_id
             );
-            switch (+ele.authed) {
-              case 1:
-                this.pendingData.push(ele);
-                break;
-              case 2:
-                this.auditedData.push(ele);
-                break;
-              case 3:
-                this.refuseData.push(ele);
-                break;
-              default:
-                break;
-            }
+            this[obj.type]["data"].push(ele);
+            this[obj.type]["total"] = res.data.total;
           });
         });
+    },
+    pageChange(val) {
+      this.loadPerson({
+        type: val.type,
+        classify: val.classify,
+        cpage: val.cpage,
+        total: val.total
+      });
     }
   }
 };
